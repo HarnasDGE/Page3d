@@ -15,6 +15,11 @@ export interface Rect {
   maxZ: number;
 }
 
+export interface Point {
+  x: number;
+  z: number;
+}
+
 export interface Building {
   id: string;
   street: StreetId | 'plaza';
@@ -24,11 +29,16 @@ export interface Building {
   depth: number;
   height: number;
   accent: string;
+  /** Unit vector pointing out of the main facade (towards the street). */
+  facing: Point;
+  /** Ground point in the middle of the main facade, where the entrance sits. */
+  door: Point;
 }
 
 export interface Street {
   id: StreetId;
   label: string;
+  accent: string;
   area: Rect;
 }
 
@@ -36,10 +46,10 @@ export const PLAZA_HALF_SIZE = 14;
 export const STREET_HALF_WIDTH = 5;
 export const STREET_LENGTH = 56;
 
-const BUILDING_WIDTH = 12;
-const BUILDING_DEPTH = 14;
-const BUILDING_GAP = 2;
-const BUILDINGS_PER_SIDE = 3;
+export const BUILDING_WIDTH = 12;
+export const BUILDING_DEPTH = 14;
+export const BUILDING_GAP = 2;
+export const BUILDINGS_PER_SIDE = 3;
 /** Streets overlap the plaza a bit so the walkable areas stay connected. */
 const STREET_OVERLAP = 2;
 
@@ -50,7 +60,6 @@ export const ACCENTS = {
   amber: '#ffb800',
 } as const;
 
-type Point = { x: number; z: number };
 type Transform = (p: Point) => Point;
 
 const DIRECTIONS: Record<StreetId, Transform> = {
@@ -58,6 +67,17 @@ const DIRECTIONS: Record<StreetId, Transform> = {
   blog: ({ x, z }) => ({ x: -z, z: x }), // east
   contact: ({ x, z }) => ({ x: -x, z: -z }), // south
   about: ({ x, z }) => ({ x: z, z: -x }), // west
+};
+
+/**
+ * Y rotation matching each street transform, so decor can be authored once in
+ * local street space and placed with `<group rotation-y={STREET_ROTATION[id]}>`.
+ */
+export const STREET_ROTATION: Record<StreetId, number> = {
+  services: 0,
+  blog: -Math.PI / 2,
+  contact: Math.PI,
+  about: Math.PI / 2,
 };
 
 const STREET_META: Record<StreetId, { label: string; accent: string }> = {
@@ -77,6 +97,12 @@ function transformRect(rect: Rect, transform: Transform): Rect {
     maxZ: Math.max(a.z, b.z),
   };
 }
+
+/** Rotation-only transforms are linear, so they also rotate direction vectors. */
+const place = (transform: Transform, facing: Point, door: Point) => ({
+  facing: transform(facing),
+  door: transform(door),
+});
 
 function rectToBuilding(
   rect: Rect,
@@ -126,6 +152,7 @@ function buildStreet(id: StreetId): { street: Street; buildings: Building[] } {
             street: id,
             height: 14 + ((i * 7 + (side + 1) * 5) % 12),
             accent,
+            ...place(transform, { x: -side, z: 0 }, { x: inner, z: (minZ + maxZ) / 2 }),
           },
         ),
       );
@@ -140,11 +167,17 @@ function buildStreet(id: StreetId): { street: Street; buildings: Building[] } {
         { minX: -capWidth, maxX: capWidth, minZ: streetEnd - 12, maxZ: streetEnd },
         transform,
       ),
-      { id: `${id}-end`, street: id, height: 30, accent },
+      {
+        id: `${id}-end`,
+        street: id,
+        height: 30,
+        accent,
+        ...place(transform, { x: 0, z: 1 }, { x: 0, z: streetEnd }),
+      },
     ),
   );
 
-  return { street: { id, label, area }, buildings };
+  return { street: { id, label, accent, area }, buildings };
 }
 
 function buildPlazaCorners(): Building[] {
@@ -167,7 +200,14 @@ function buildPlazaCorners(): Building[] {
         minZ: Math.min(...zs),
         maxZ: Math.max(...zs),
       },
-      { id: `plaza-${i}`, street: 'plaza', height: 38 + i * 6, accent: accents[i] },
+      {
+        id: `plaza-${i}`,
+        street: 'plaza',
+        height: 38 + i * 6,
+        accent: accents[i],
+        facing: { x: -sx, z: 0 },
+        door: { x: sx * inner, z: (sz * (inner + outer)) / 2 },
+      },
     );
   });
 }

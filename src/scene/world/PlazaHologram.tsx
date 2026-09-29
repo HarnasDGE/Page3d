@@ -1,6 +1,7 @@
 import { useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import type { Mesh } from 'three';
+import { neon } from '@/scene/materials/neon';
 import { ACCENTS } from './cityLayout';
 
 /** Placeholder centrepiece of the plaza; becomes the intro hologram later. */
@@ -21,11 +22,11 @@ export function PlazaHologram() {
       </mesh>
       <mesh position-y={0.82} rotation-x={-Math.PI / 2}>
         <ringGeometry args={[1.5, 1.7, 48]} />
-        <meshBasicMaterial color={ACCENTS.cyan} toneMapped={false} />
+        <meshBasicMaterial color={neon(ACCENTS.cyan, 2.4)} toneMapped={false} />
       </mesh>
       <mesh ref={hologram}>
         <octahedronGeometry args={[1.1, 0]} />
-        <meshBasicMaterial color={ACCENTS.cyan} wireframe toneMapped={false} />
+        <meshBasicMaterial color={neon(ACCENTS.cyan, 2.4)} wireframe toneMapped={false} />
       </mesh>
       <pointLight position={[0, 3, 0]} color={ACCENTS.cyan} intensity={25} distance={16} />
     </group>

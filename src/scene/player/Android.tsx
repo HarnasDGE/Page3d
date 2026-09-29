@@ -2,6 +2,7 @@ import { useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { RoundedBox } from '@react-three/drei';
 import { MathUtils, type Group } from 'three';
+import { neon } from '@/scene/materials/neon';
 import { ACCENTS } from '@/scene/world/cityLayout';
 import { player, RUN_SPEED } from './playerState';
 
@@ -61,7 +62,7 @@ export function Android() {
         </RoundedBox>
         <mesh position={[0, 1.16, 0.2]}>
           <boxGeometry args={[0.3, 0.05, 0.02]} />
-          <meshBasicMaterial color={ACCENTS.magenta} toneMapped={false} />
+          <meshBasicMaterial color={neon(ACCENTS.magenta, 2.5)} toneMapped={false} />
         </mesh>
 
         {/* Head */}
@@ -71,7 +72,7 @@ export function Android() {
           </RoundedBox>
           <mesh position={[0, 0.02, 0.215]}>
             <boxGeometry args={[0.42, 0.13, 0.03]} />
-            <meshBasicMaterial color={ACCENTS.cyan} toneMapped={false} />
+            <meshBasicMaterial color={neon(ACCENTS.cyan, 2.5)} toneMapped={false} />
           </mesh>
           <mesh position={[0.16, 0.3, 0]}>
             <cylinderGeometry args={[0.015, 0.015, 0.22]} />
@@ -79,7 +80,7 @@ export function Android() {
           </mesh>
           <mesh position={[0.16, 0.42, 0]}>
             <sphereGeometry args={[0.04, 12, 12]} />
-            <meshBasicMaterial color={ACCENTS.magenta} toneMapped={false} />
+            <meshBasicMaterial color={neon(ACCENTS.magenta, 2.5)} toneMapped={false} />
           </mesh>
         </group>
 

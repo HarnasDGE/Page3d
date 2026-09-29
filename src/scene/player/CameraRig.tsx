@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
-import { MathUtils, Vector3 } from 'three';
+import { MathUtils, PerspectiveCamera, Vector3 } from 'three';
 import { resolveCollisions } from '@/scene/world/collision';
 import { cameraOrbit, player } from './playerState';
 
@@ -13,6 +13,8 @@ const PITCH_SENSITIVITY = 0.004;
 const FOLLOW_DAMPING = 8;
 /** Keeps the camera above the streets so it never ends up inside a building. */
 const CAMERA_RADIUS = 0.3;
+const LANDSCAPE_FOV = 55;
+const PORTRAIT_FOV = 72;
 
 const desired = new Vector3();
 const lookAt = new Vector3();
@@ -61,6 +63,14 @@ export function CameraRig() {
       window.removeEventListener('pointercancel', onPointerUp);
     };
   }, [element]);
+
+  // Portrait screens get a wider field of view so the streets stay readable.
+  const aspect = useThree((state) => state.viewport.aspect);
+  useEffect(() => {
+    if (!(camera instanceof PerspectiveCamera)) return;
+    camera.fov = aspect < 1 ? PORTRAIT_FOV : LANDSCAPE_FOV;
+    camera.updateProjectionMatrix();
+  }, [camera, aspect]);
 
   useFrame((_, rawDelta) => {
     const delta = Math.min(rawDelta, 0.05);

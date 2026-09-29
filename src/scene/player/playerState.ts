@@ -17,3 +17,8 @@ export const cameraOrbit = {
 export const PLAYER_RADIUS = 0.45;
 export const WALK_SPEED = 4.5;
 export const RUN_SPEED = 8.5;
+
+// Dev-only handle for debugging and automated browser checks (teleports etc.).
+if (import.meta.env.DEV && typeof window !== 'undefined') {
+  Object.assign(window, { __neon: { player, cameraOrbit } });
+}

@@ -1,0 +1,28 @@
+@import 'tailwindcss';
+@import '@fontsource-variable/orbitron';
+@import '@fontsource/rajdhani/400.css';
+@import '@fontsource/rajdhani/600.css';
+
+@theme {
+  --color-night: #07060f;
+  --color-night-soft: #120f24;
+  --color-neon-cyan: #00f0ff;
+  --color-neon-magenta: #ff2bd6;
+  --color-neon-violet: #8b5cff;
+  --color-neon-amber: #ffb800;
+
+  --font-display: 'Orbitron Variable', sans-serif;
+  --font-body: 'Rajdhani', sans-serif;
+}
+
+@layer base {
+  html,
+  body {
+    @apply h-full overflow-hidden bg-night font-body text-white antialiased;
+    overscroll-behavior: none;
+  }
+
+  canvas {
+    touch-action: none;
+  }
+}

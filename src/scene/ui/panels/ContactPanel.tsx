@@ -1,12 +1,12 @@
 import { useState, type SubmitEvent } from 'react';
-import { actions, isInputError } from 'astro:actions';
 import { profile } from '@/data/profile';
+import { sendContactForm, type ContactField } from '@/lib/contact/api';
 import { useGameStore } from '@/scene/store/gameStore';
 import { ACCENTS } from '@/scene/world/cityLayout';
 import { PanelFrame } from './PanelFrame';
 
 type Status = 'idle' | 'sending' | 'sent' | 'error';
-type FieldErrors = Partial<Record<'name' | 'email' | 'topic' | 'message', string[]>>;
+type FieldErrors = Partial<Record<ContactField, string[]>>;
 
 const inputClass =
   'w-full rounded-md border border-white/15 bg-night/70 px-3 py-2.5 text-base text-white placeholder:text-white/35 outline-none transition focus:border-neon-magenta focus:ring-1 focus:ring-neon-magenta';
@@ -28,15 +28,15 @@ export function ContactPanel({ topic }: { topic?: string }) {
     setStatus('sending');
     setFieldErrors({});
 
-    const { error } = await actions.contact(new FormData(event.currentTarget));
+    const result = await sendContactForm(new FormData(event.currentTarget));
 
-    if (!error) {
+    if (result.ok) {
       setStatus('sent');
       setSignalPending(true);
       return;
     }
-    if (isInputError(error)) setFieldErrors(error.fields as FieldErrors);
-    setErrorMessage(isInputError(error) ? 'Please check the highlighted fields.' : error.message);
+    setFieldErrors(result.fields ?? {});
+    setErrorMessage(result.message);
     setStatus('error');
   };
 

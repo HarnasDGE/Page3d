@@ -1,3 +1,5 @@
+import type { ProjectId } from './projects';
+
 export type ServiceIcon = 'browser' | 'bag' | 'stack' | 'gauge';
 
 export interface Service {
@@ -12,6 +14,8 @@ export interface Service {
   timeline: string;
   accent: string;
   icon: ServiceIcon;
+  /** Two showcase projects for the portfolio screens (left and right wall). */
+  projects: [ProjectId, ProjectId];
 }
 
 export const services: Service[] = [
@@ -31,6 +35,7 @@ export const services: Service[] = [
     timeline: '2–4 weeks',
     accent: '#00f0ff',
     icon: 'browser',
+    projects: ['aurora', 'voltage'],
   },
   {
     slug: 'e-commerce',
@@ -48,6 +53,7 @@ export const services: Service[] = [
     timeline: '4–8 weeks',
     accent: '#ff2bd6',
     icon: 'bag',
+    projects: ['voltage', 'aurora'],
   },
   {
     slug: 'web-apps',
@@ -65,6 +71,7 @@ export const services: Service[] = [
     timeline: '6–12 weeks',
     accent: '#8b5cff',
     icon: 'stack',
+    projects: ['pulse', 'voltage'],
   },
   {
     slug: 'performance',
@@ -82,6 +89,7 @@ export const services: Service[] = [
     timeline: '1–2 weeks',
     accent: '#ffb800',
     icon: 'gauge',
+    projects: ['aurora', 'pulse'],
   },
 ];
 

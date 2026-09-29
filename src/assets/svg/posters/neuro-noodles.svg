@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="768" viewBox="0 0 512 768">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2a0730"/>
+      <stop offset="1" stop-color="#0c0418"/>
+    </linearGradient>
+    <filter id="glow"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <rect width="512" height="768" fill="url(#bg)"/>
+  <circle cx="256" cy="330" r="150" fill="#ff2bd6" opacity="0.18"/>
+  <g filter="url(#glow)" fill="none" stroke-linecap="round">
+    <path d="M120 330 H392 A136 136 0 0 1 120 330 Z" fill="#ff2bd6" stroke="#ffd1f5" stroke-width="6"/>
+    <path d="M170 300 C200 250 230 330 260 280 C290 230 320 310 350 260" stroke="#ffb800" stroke-width="10"/>
+    <path d="M300 120 L380 300" stroke="#ffb800" stroke-width="10"/>
+    <path d="M340 110 L400 296" stroke="#ffb800" stroke-width="10"/>
+  </g>
+  <g font-family="Arial Black, Arial, sans-serif" text-anchor="middle" filter="url(#glow)">
+    <text x="256" y="560" font-size="64" fill="#ffffff">NEURO</text>
+    <text x="256" y="630" font-size="64" fill="#ff2bd6">NOODLES</text>
+    <text x="256" y="700" font-size="28" fill="#ffb800" letter-spacing="8">OPEN 24/7</text>
+  </g>
+  <rect x="14" y="14" width="484" height="740" fill="none" stroke="#ff2bd6" stroke-width="4" opacity="0.7"/>
+</svg>

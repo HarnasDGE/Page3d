@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="256" viewBox="0 0 512 256">
+  <defs>
+    <filter id="spray" x="-10%" y="-10%" width="120%" height="120%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="1" seed="5" result="noise"/>
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="5"/>
+      <feGaussianBlur stdDeviation="1"/>
+    </filter>
+  </defs>
+  <g filter="url(#spray)" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <path d="M70 70 L20 128 L70 186" stroke="#8b5cff" stroke-width="20"/>
+    <path d="M200 50 L150 206" stroke="#00f0ff" stroke-width="20"/>
+    <path d="M280 70 L330 128 L280 186" stroke="#8b5cff" stroke-width="20"/>
+    <path d="M430 60 L446 110 L500 112 L456 144 L472 196 L430 164 L388 196 L404 144 L360 112 L414 110 Z" stroke="#ffb800" stroke-width="10"/>
+  </g>
+</svg>

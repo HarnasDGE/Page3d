@@ -5,7 +5,7 @@ import { requestInteraction } from '@/scene/interaction/interactables';
 import { enterVenue } from '@/scene/interaction/travel';
 import { useInteractable } from '@/scene/interaction/useInteractable';
 import { useGameStore } from '@/scene/store/gameStore';
-import { buildings, type Building } from './cityLayout';
+import { buildings, facadeLength, facingRotation, type Building } from './cityLayout';
 import { onTap } from './events';
 import { venueByBuilding, type Venue } from './venues';
 
@@ -20,8 +20,6 @@ const ENTRY_RADIUS = 2.2;
 
 const DECOR_SIGNS = ['NOODLES', 'HOTEL', '24/7', 'ARCADE', 'RAMEN', 'CYBER', 'DATA', 'SUSHI'];
 
-/** Rotation that turns a group's +Z towards the building facing vector. */
-const facingRotation = (building: Building) => Math.atan2(building.facing.x, building.facing.z);
 
 function Storefront({ building, venue }: { building: Building; venue: Venue }) {
   const id = `venue:${building.id}`;
@@ -94,10 +92,6 @@ function Storefront({ building, venue }: { building: Building; venue: Venue }) {
     </group>
   );
 }
-
-/** Length of the main facade (the side the door is on). */
-const facadeLength = (building: Building) =>
-  building.facing.x !== 0 ? building.depth : building.width;
 
 /** Vertical neon blade sign sticking out of a decorative building. */
 function BladeSign({ building, word }: { building: Building; word: string }) {

@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="768" viewBox="0 0 512 768">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#001c2e"/>
+      <stop offset="1" stop-color="#140428"/>
+    </linearGradient>
+    <linearGradient id="chrome" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f4f7ff"/>
+      <stop offset="0.5" stop-color="#7a86a8"/>
+      <stop offset="0.52" stop-color="#2b2f4a"/>
+      <stop offset="1" stop-color="#b8c4e6"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="768" fill="url(#bg)"/>
+  <g fill="none" stroke="#00f0ff" stroke-width="5">
+    <path d="M256 110 C360 110 400 190 400 290 C400 400 330 470 256 470 C182 470 112 400 112 290 C112 190 152 110 256 110 Z"/>
+    <path d="M150 280 H362" stroke="#ff2bd6" stroke-width="22" stroke-linecap="round"/>
+    <path d="M200 390 Q256 420 312 390"/>
+    <path d="M256 470 V520 M200 520 H312"/>
+  </g>
+  <g font-family="Arial Black, Arial, sans-serif" text-anchor="middle">
+    <text x="256" y="620" font-size="66" fill="url(#chrome)">CHROME</text>
+    <text x="256" y="690" font-size="66" fill="url(#chrome)">DREAMS</text>
+    <text x="256" y="740" font-size="22" fill="#00f0ff" letter-spacing="8">UPGRADE YOURSELF</text>
+  </g>
+</svg>

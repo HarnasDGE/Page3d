@@ -7,6 +7,8 @@ export interface BlogPost {
   date: string;
   tags: string[];
   readingMinutes: number;
+  /** URL of the cover artwork, if the post has one. */
+  cover?: string;
   /** Pre-rendered Markdown (trusted, from our own content collection). */
   html: string;
 }

@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="768" viewBox="0 0 512 768">
+  <defs>
+    <filter id="glow"><feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <pattern id="scan" width="4" height="4" patternUnits="userSpaceOnUse"><rect width="4" height="2" fill="#000" opacity="0.25"/></pattern>
+  </defs>
+  <rect width="512" height="768" fill="#04130f"/>
+  <g font-family="Courier New, monospace" font-size="18" fill="#1cff9e" opacity="0.35">
+    <text x="24" y="60">01101110 01100101 01101111</text>
+    <text x="24" y="90">const night = code.all();</text>
+    <text x="24" y="120">while (awake) ship();</text>
+  </g>
+  <text x="256" y="400" text-anchor="middle" font-family="Courier New, monospace" font-weight="bold" font-size="220" fill="#1cff9e" filter="url(#glow)">&lt;/&gt;</text>
+  <g font-family="Arial Black, Arial, sans-serif" text-anchor="middle" filter="url(#glow)">
+    <text x="256" y="590" font-size="76" fill="#ffffff">BYTE</text>
+    <text x="256" y="670" font-size="76" fill="#1cff9e">CLUB</text>
+    <text x="256" y="724" font-size="22" fill="#8bffd0" letter-spacing="6">CODE ALL NIGHT · SECTOR 7</text>
+  </g>
+  <rect width="512" height="768" fill="url(#scan)"/>
+</svg>

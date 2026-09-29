@@ -8,6 +8,7 @@ import { useContentStore } from '@/scene/store/contentStore';
 import { useGameStore } from '@/scene/store/gameStore';
 import { onTap } from '@/scene/world/events';
 import type { BlogPost } from '@/types/blog';
+import { FramedImage } from '../components/FramedImage';
 import { HoloPanel, PanelText } from '../components/HoloPanel';
 import { Pedestal } from '../components/Pedestal';
 import { ROOM, TERMINAL_HALF_SIZE, TERMINAL_SLOTS, WALLS } from '../roomLayout';
@@ -41,6 +42,10 @@ function Terminal({ post, x, z, accent }: { post: BlogPost; x: number; z: number
         <boxGeometry args={[TERMINAL_HALF_SIZE.x * 2, 0.05, 0.02]} />
         <meshBasicMaterial color={neon(accent, isNearby ? 3 : 1.6)} toneMapped={false} />
       </mesh>
+
+      {post.cover && (
+        <FramedImage url={post.cover} position={[0, 3.45, -0.2]} width={1.9} height={1.07} accent={accent} />
+      )}
 
       {/* Tilted screen */}
       <group position={[0, 2, 0]} rotation-x={-0.18}>

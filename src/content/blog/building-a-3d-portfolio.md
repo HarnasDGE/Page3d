@@ -2,6 +2,7 @@
 title: Building a 3D portfolio with React Three Fiber
 description: How this neon district was built — procedural buildings, a tiny collision system and keeping it smooth on phones.
 pubDate: 2026-09-20
+cover: neon-city
 tags: [threejs, react, creative-dev]
 ---
 
@@ -11,9 +12,9 @@ This portfolio is a small city you walk through instead of a page you scroll. He
 
 Streets, buildings, doors and colliders all derive from a single data file. Moving a building moves its collider, its door and its sign.
 
-## No models, no textures
+## No 3D models, just boxes and SVG
 
-Facades are plain boxes. A few lines of shader code turn world position into a grid of lit windows, so the whole skyline costs one draw call.
+Facades are plain boxes. A few lines of shader code turn world position into a grid of lit windows, so the whole skyline costs one draw call. Posters, graffiti, road markings and logos are small SVG files the browser rasterises once into textures.
 
 ## Collisions without a physics engine
 

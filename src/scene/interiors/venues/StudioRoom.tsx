@@ -2,7 +2,9 @@ import { profile } from '@/data/profile';
 import { neon } from '@/scene/materials/neon';
 import { useInteractable } from '@/scene/interaction/useInteractable';
 import { useGameStore } from '@/scene/store/gameStore';
+import { INTERIOR_TEXTURES } from '@/scene/textures/assets';
 import { blockTap } from '@/scene/world/events';
+import { FramedImage } from '../components/FramedImage';
 import { HoloPanel, PanelText } from '../components/HoloPanel';
 import { EXHIBIT, WALLS } from '../roomLayout';
 
@@ -80,9 +82,17 @@ export function StudioRoom({ accent }: { accent: string }) {
     <group>
       <Desk accent={accent} />
 
+      <FramedImage
+        url={INTERIOR_TEXTURES.avatar}
+        position={[WALLS.back.x - 6.3, 3.4, WALLS.back.z]}
+        width={2.6}
+        height={3.25}
+        accent={accent}
+      />
+
       <HoloPanel
-        position={[WALLS.back.x, 3.4, WALLS.back.z]}
-        width={13}
+        position={[WALLS.back.x + 1.6, 3.4, WALLS.back.z]}
+        width={11.6}
         height={4.8}
         accent={accent}
         title={profile.name.toUpperCase()}
@@ -90,7 +100,7 @@ export function StudioRoom({ accent }: { accent: string }) {
         <PanelText font="display" size={0.26} color={accent} glow={2}>
           {profile.role.toUpperCase()}
         </PanelText>
-        <PanelText y={-0.55} size={0.34} maxWidth={12}>
+        <PanelText y={-0.55} size={0.34} maxWidth={10.6}>
           {profile.bio.join(' ')}
         </PanelText>
         {profile.stats.map((stat, i) => (

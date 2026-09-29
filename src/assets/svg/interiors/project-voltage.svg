@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" viewBox="0 0 800 500">
+  <rect width="800" height="500" fill="#0f1020"/>
+  <rect width="800" height="36" fill="#26222f"/>
+  <circle cx="22" cy="18" r="6" fill="#ff5f57"/><circle cx="42" cy="18" r="6" fill="#febc2e"/><circle cx="62" cy="18" r="6" fill="#28c840"/>
+  <rect x="120" y="9" width="560" height="18" rx="9" fill="#3a3546"/>
+  <rect y="36" width="800" height="56" fill="#16172e"/>
+  <text x="30" y="72" font-family="Arial Black, Arial, sans-serif" font-size="24" fill="#ff2bd6">VOLTAGE</text>
+  <g font-family="Arial, sans-serif" font-size="15" fill="#b8b6d8"><text x="420" y="70">New</text><text x="480" y="70">Sneakers</text><text x="570" y="70">Apparel</text><text x="650" y="70">Sale</text></g>
+  <g>
+    <rect x="30" y="112" width="230" height="300" rx="12" fill="#1c1d3a"/>
+    <rect x="285" y="112" width="230" height="300" rx="12" fill="#1c1d3a"/>
+    <rect x="540" y="112" width="230" height="300" rx="12" fill="#1c1d3a"/>
+    <path d="M60 300 C90 240 150 230 220 260 L230 300 Z" fill="#ff2bd6"/>
+    <path d="M315 300 C345 230 410 225 475 262 L485 300 Z" fill="#00f0ff"/>
+    <path d="M570 300 C600 250 660 235 730 266 L740 300 Z" fill="#ffb800"/>
+    <g font-family="Arial, sans-serif" fill="#ffffff" font-size="17"><text x="50" y="350">Pulse Runner</text><text x="305" y="350">Glide 2</text><text x="560" y="350">Circuit Hi</text></g>
+    <g font-family="Arial, sans-serif" font-weight="bold" fill="#ff2bd6" font-size="18"><text x="50" y="385">€129</text><text x="305" y="385">€149</text><text x="560" y="385">€119</text></g>
+  </g>
+  <rect x="30" y="434" width="740" height="44" rx="10" fill="#ff2bd6"/>
+  <text x="400" y="462" text-anchor="middle" font-family="Arial, sans-serif" font-weight="bold" font-size="17" fill="#0f1020">Free shipping on orders over €100</text>
+</svg>

@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" viewBox="0 0 800 500">
+  <defs>
+    <linearGradient id="hero" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#3b1d0f"/>
+      <stop offset="1" stop-color="#b86b2e"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="500" fill="#f6efe6"/>
+  <rect width="800" height="36" fill="#26222f"/>
+  <circle cx="22" cy="18" r="6" fill="#ff5f57"/><circle cx="42" cy="18" r="6" fill="#febc2e"/><circle cx="62" cy="18" r="6" fill="#28c840"/>
+  <rect x="120" y="9" width="560" height="18" rx="9" fill="#3a3546"/>
+  <rect y="36" width="800" height="300" fill="url(#hero)"/>
+  <text x="60" y="110" font-family="Georgia, serif" font-size="22" fill="#f6efe6" letter-spacing="4">AURORA COFFEE</text>
+  <text x="60" y="190" font-family="Georgia, serif" font-size="54" fill="#ffffff">Roasted at dawn.</text>
+  <text x="60" y="240" font-family="Arial, sans-serif" font-size="20" fill="#f3dcc4">Specialty beans delivered fresh every week.</text>
+  <rect x="60" y="270" width="170" height="44" rx="22" fill="#f6efe6"/>
+  <text x="145" y="298" text-anchor="middle" font-family="Arial, sans-serif" font-weight="bold" font-size="16" fill="#3b1d0f">Order beans</text>
+  <circle cx="600" cy="190" r="110" fill="#f6efe6" opacity="0.15"/>
+  <circle cx="600" cy="190" r="70" fill="#2a130a"/>
+  <g fill="#e3d6c6"><rect x="60" y="370" width="210" height="100" rx="10"/><rect x="295" y="370" width="210" height="100" rx="10"/><rect x="530" y="370" width="210" height="100" rx="10"/></g>
+</svg>

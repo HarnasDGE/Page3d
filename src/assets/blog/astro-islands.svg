@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="450" viewBox="0 0 800 450">
+  <defs>
+    <radialGradient id="sea" cx="0.5" cy="0.5" r="0.7"><stop offset="0" stop-color="#1b0f3a"/><stop offset="1" stop-color="#07051a"/></radialGradient>
+    <filter id="glow"><feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <rect width="800" height="450" fill="url(#sea)"/>
+  <g filter="url(#glow)">
+    <ellipse cx="220" cy="250" rx="110" ry="46" fill="#ff2bd6"/>
+    <ellipse cx="480" cy="190" rx="80" ry="34" fill="#00f0ff"/>
+    <ellipse cx="610" cy="320" rx="60" ry="26" fill="#ffb800"/>
+  </g>
+  <g fill="none" stroke="#8b5cff" stroke-width="2" stroke-dasharray="6 8" opacity="0.7">
+    <path d="M320 240 C380 220 410 200 400 195"/><path d="M540 215 C590 250 600 280 600 294"/>
+  </g>
+  <text x="40" y="410" font-family="Arial Black, Arial, sans-serif" font-size="30" fill="#ffffff">ISLANDS ARCHITECTURE</text>
+</svg>

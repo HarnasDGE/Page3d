@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="256" viewBox="0 0 512 256">
+  <defs>
+    <filter id="spray" x="-10%" y="-10%" width="120%" height="120%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="1" seed="2" result="noise"/>
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="6"/>
+      <feGaussianBlur stdDeviation="1.2"/>
+    </filter>
+  </defs>
+  <g filter="url(#spray)" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <path d="M40 190 L60 60 L120 180 L140 56" stroke="#ff2bd6" stroke-width="22"/>
+    <path d="M230 64 H172 V186 H232 M172 124 H218" stroke="#00f0ff" stroke-width="22"/>
+    <circle cx="300" cy="124" r="58" stroke="#ffb800" stroke-width="22"/>
+    <path d="M396 190 L406 60 L466 186 L476 56" stroke="#ff2bd6" stroke-width="22"/>
+    <path d="M60 196 V236 M232 190 V222 M406 196 V244" stroke="#ff2bd6" stroke-width="6"/>
+  </g>
+</svg>

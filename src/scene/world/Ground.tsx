@@ -1,11 +1,18 @@
+import { Suspense } from 'react';
 import { MeshReflectorMaterial } from '@react-three/drei';
 import { tapToMove } from '@/scene/controls/tapToMove';
 import { neon } from '@/scene/materials/neon';
 import { useGameStore } from '@/scene/store/gameStore';
+import { ROAD_TEXTURES } from '@/scene/textures/assets';
+import { useDecalTexture } from '@/scene/textures/useDecalTexture';
 import { ACCENTS, PLAZA_HALF_SIZE } from './cityLayout';
 
 const GROUND_SIZE = 400;
 const GROUND_COLOR = '#0a0915';
+/** Tint multiplied over the asphalt texture. */
+const ASPHALT_TINT = '#c4bfe0';
+/** World units covered by one asphalt tile. */
+const ASPHALT_TILE = 6;
 
 /** Concentric neon rings in the plaza floor. */
 function PlazaFloor() {
@@ -26,32 +33,41 @@ function PlazaFloor() {
   );
 }
 
-export function Ground() {
+/** Wet asphalt: tiled SVG texture plus blurred reflections of the neon above. */
+function AsphaltMaterial() {
   const quality = useGameStore((state) => state.quality);
+  const tiles = GROUND_SIZE / ASPHALT_TILE;
+  const map = useDecalTexture(ROAD_TEXTURES.asphalt, { repeat: [tiles, tiles] });
 
+  return quality === 'high' ? (
+    <MeshReflectorMaterial
+      map={map}
+      color={ASPHALT_TINT}
+      resolution={512}
+      blur={[400, 120]}
+      mixBlur={1}
+      mixStrength={30}
+      mixContrast={1.1}
+      roughness={0.7}
+      metalness={0.5}
+      depthScale={1}
+      minDepthThreshold={0.6}
+      maxDepthThreshold={1.4}
+      mirror={0}
+    />
+  ) : (
+    <meshStandardMaterial map={map} color={ASPHALT_TINT} roughness={0.35} metalness={0.7} />
+  );
+}
+
+export function Ground() {
   return (
     <group>
       <mesh rotation-x={-Math.PI / 2} onClick={tapToMove}>
         <planeGeometry args={[GROUND_SIZE, GROUND_SIZE]} />
-        {quality === 'high' ? (
-          // Wet asphalt: blurred reflections of the neon above.
-          <MeshReflectorMaterial
-            color={GROUND_COLOR}
-            resolution={512}
-            blur={[400, 120]}
-            mixBlur={1}
-            mixStrength={30}
-            mixContrast={1.1}
-            roughness={0.7}
-            metalness={0.5}
-            depthScale={1}
-            minDepthThreshold={0.6}
-            maxDepthThreshold={1.4}
-            mirror={0}
-          />
-        ) : (
-          <meshStandardMaterial color={GROUND_COLOR} roughness={0.35} metalness={0.7} />
-        )}
+        <Suspense fallback={<meshStandardMaterial color={GROUND_COLOR} roughness={0.35} metalness={0.7} />}>
+          <AsphaltMaterial />
+        </Suspense>
       </mesh>
       <PlazaFloor />
     </group>

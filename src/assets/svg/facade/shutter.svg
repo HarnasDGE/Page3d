@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="448" viewBox="0 0 512 448">
+  <defs>
+    <linearGradient id="slat" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#4a4660"/>
+      <stop offset="0.5" stop-color="#2c2940"/>
+      <stop offset="1" stop-color="#1a1828"/>
+    </linearGradient>
+    <pattern id="slats" width="512" height="28" patternUnits="userSpaceOnUse">
+      <rect width="512" height="28" fill="url(#slat)"/>
+      <rect y="26" width="512" height="2" fill="#0c0b14"/>
+    </pattern>
+    <filter id="spray"><feTurbulence baseFrequency="0.7" seed="8" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="4"/></filter>
+  </defs>
+  <rect width="512" height="448" fill="url(#slats)"/>
+  <rect x="236" y="400" width="40" height="14" rx="3" fill="#0c0b14"/>
+  <text x="256" y="220" text-anchor="middle" font-family="Arial Black, Arial, sans-serif" font-size="72" fill="none" stroke="#00f0ff" stroke-width="5" filter="url(#spray)" transform="rotate(-6 256 220)">CLOSED</text>
+</svg>

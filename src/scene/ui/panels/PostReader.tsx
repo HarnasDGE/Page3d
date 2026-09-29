@@ -13,6 +13,15 @@ export function PostReader({ slug }: { slug: string }) {
       eyebrow={`${formatDate(post.date)} · ${post.readingMinutes} min read`}
       accent={ACCENTS.amber}
     >
+      {post.cover && (
+        <img
+          src={post.cover}
+          alt=""
+          width={800}
+          height={450}
+          className="mb-6 aspect-video w-full rounded-lg border border-neon-amber/30 object-cover"
+        />
+      )}
       <article className="prose-neon" dangerouslySetInnerHTML={{ __html: post.html }} />
       <p className="mt-6 flex flex-wrap gap-2">
         {post.tags.map((tag) => (

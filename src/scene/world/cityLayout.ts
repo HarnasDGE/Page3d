@@ -35,6 +35,13 @@ export interface Building {
   door: Point;
 }
 
+/** Rotation that turns a group's +Z towards the building's facing vector. */
+export const facingRotation = (building: Building) => Math.atan2(building.facing.x, building.facing.z);
+
+/** Length of the main facade (the side the door is on). */
+export const facadeLength = (building: Building) =>
+  building.facing.x !== 0 ? building.depth : building.width;
+
 export interface Street {
   id: StreetId;
   label: string;
@@ -232,10 +239,26 @@ export const plazaArea: Rect = {
 /** Areas the player can walk on (union of rects). */
 export const walkableAreas: Rect[] = [plazaArea, ...streets.map((s) => s.area)];
 
+/** Freestanding NON.agency billboard in the north-east plaza corner, facing the spawn. */
+export const BRAND_BILLBOARD = {
+  x: 10.4,
+  z: -10.4,
+  rotationY: -0.62,
+  /** Distance of each leg from the centre, along the board. */
+  legOffset: 2.6,
+} as const;
+
+const billboardLegs: Rect[] = [-1, 1].map((side) => {
+  const x = BRAND_BILLBOARD.x + Math.cos(BRAND_BILLBOARD.rotationY) * side * BRAND_BILLBOARD.legOffset;
+  const z = BRAND_BILLBOARD.z - Math.sin(BRAND_BILLBOARD.rotationY) * side * BRAND_BILLBOARD.legOffset;
+  return { minX: x - 0.35, maxX: x + 0.35, minZ: z - 0.35, maxZ: z + 0.35 };
+});
+
 /** Solid props standing inside walkable areas. */
 export const obstacles: Rect[] = [
   // Central hologram pedestal.
   { minX: -2, maxX: 2, minZ: -2, maxZ: 2 },
+  ...billboardLegs,
 ];
 
 export const PLAYER_SPAWN = { x: 0, z: 8 } as const;

@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+  <defs>
+    <radialGradient id="rim" r="0.5">
+      <stop offset="0.86" stop-color="#2c2840"/>
+      <stop offset="1" stop-color="#0a0914"/>
+    </radialGradient>
+    <pattern id="grid" width="18" height="18" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="18" height="18" fill="#221f36"/>
+      <rect x="2" y="2" width="14" height="14" rx="2" fill="#35304f"/>
+    </pattern>
+  </defs>
+  <circle cx="128" cy="128" r="124" fill="url(#rim)"/>
+  <circle cx="128" cy="128" r="104" fill="url(#grid)"/>
+  <circle cx="128" cy="128" r="104" fill="none" stroke="#14121f" stroke-width="6"/>
+  <circle cx="128" cy="128" r="30" fill="#2c2840" stroke="#14121f" stroke-width="4"/>
+  <text x="128" y="136" text-anchor="middle" font-family="Arial Black, Arial, sans-serif" font-size="20" fill="#4a4468">ND</text>
+</svg>

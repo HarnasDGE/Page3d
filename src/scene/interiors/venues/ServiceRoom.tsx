@@ -1,12 +1,17 @@
+import { projects } from '@/data/projects';
 import type { Service } from '@/data/services';
 import { useInteractable } from '@/scene/interaction/useInteractable';
 import { useGameStore } from '@/scene/store/gameStore';
+import { PROJECT_IMAGES } from '@/scene/textures/assets';
+import { FramedImage } from '../components/FramedImage';
 import { HoloPanel, PanelText } from '../components/HoloPanel';
 import { Pedestal } from '../components/Pedestal';
 import { ServiceHologram } from '../components/ServiceHologram';
 import { EXHIBIT, WALLS } from '../roomLayout';
 
 const LINE = 0.55;
+/** Portfolio screens sit near the entrance, clear of the side wall panels. */
+const SCREEN = { z: -1, y: 2.6, width: 3, height: 1.875 } as const;
 
 export function ServiceRoom({ service }: { service: Service }) {
   const openPanel = useGameStore((state) => state.openPanel);
@@ -22,6 +27,23 @@ export function ServiceRoom({ service }: { service: Service }) {
 
   return (
     <group>
+      {([WALLS.left, WALLS.right] as const).map((wall, i) => {
+        const project = projects[service.projects[i]];
+        return (
+          <FramedImage
+            key={project.id}
+            url={PROJECT_IMAGES[project.id]}
+            position={[wall.x, SCREEN.y, SCREEN.z]}
+            rotationY={wall.rotationY}
+            width={SCREEN.width}
+            height={SCREEN.height}
+            accent={accent}
+            caption={project.category.toUpperCase()}
+            subCaption={project.title}
+          />
+        );
+      })}
+
       <Pedestal accent={accent}>
         <ServiceHologram icon={service.icon} accent={accent} />
       </Pedestal>

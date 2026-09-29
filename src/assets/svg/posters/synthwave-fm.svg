@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="768" viewBox="0 0 512 768">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0a0220"/>
+      <stop offset="0.55" stop-color="#3a0a55"/>
+      <stop offset="0.56" stop-color="#07021a"/>
+    </linearGradient>
+    <linearGradient id="sun" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffe066"/>
+      <stop offset="1" stop-color="#ff2bd6"/>
+    </linearGradient>
+    <clipPath id="sunCut">
+      <rect x="0" y="160" width="512" height="40"/>
+      <rect x="0" y="210" width="512" height="32"/>
+      <rect x="0" y="250" width="512" height="24"/>
+      <rect x="0" y="282" width="512" height="18"/>
+      <rect x="0" y="306" width="512" height="12"/>
+      <rect x="0" y="322" width="512" height="8"/>
+    </clipPath>
+  </defs>
+  <rect width="512" height="768" fill="url(#sky)"/>
+  <circle cx="256" cy="260" r="150" fill="url(#sun)" clip-path="url(#sunCut)"/>
+  <g stroke="#00f0ff" stroke-width="2" opacity="0.8">
+    <path d="M0 440 H512 M0 470 H512 M0 510 H512 M0 560 H512"/>
+    <path d="M256 430 L256 600 M256 430 L120 600 M256 430 L0 560 M256 430 L392 600 M256 430 L512 560"/>
+  </g>
+  <g font-family="Arial Black, Arial, sans-serif" text-anchor="middle">
+    <text x="256" y="660" font-size="54" fill="#00f0ff">SYNTHWAVE</text>
+    <text x="256" y="722" font-size="40" fill="#ff2bd6" letter-spacing="6">FM 88.3</text>
+  </g>
+</svg>

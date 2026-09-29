@@ -2,6 +2,7 @@
 title: Why I build marketing sites with Astro
 description: Shipping zero JavaScript by default changed how fast my client sites feel — here is why Astro became my default.
 pubDate: 2026-08-18
+cover: astro-islands
 tags: [astro, performance]
 ---
 

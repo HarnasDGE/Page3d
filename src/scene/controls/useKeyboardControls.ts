@@ -16,7 +16,7 @@ const KEY_MAP: Record<string, KeyAction> = {
   ShiftRight: 'run',
 };
 
-function isTypingTarget(target: EventTarget | null) {
+export function isTypingTarget(target: EventTarget | null) {
   return (
     target instanceof HTMLElement &&
     (target.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName))

@@ -1,15 +1,9 @@
 import { MeshReflectorMaterial } from '@react-three/drei';
-import type { ThreeEvent } from '@react-three/fiber';
-import { Vector3 } from 'three';
-import { setMoveTarget } from '@/scene/controls/input';
+import { tapToMove } from '@/scene/controls/tapToMove';
 import { neon } from '@/scene/materials/neon';
 import { useGameStore } from '@/scene/store/gameStore';
-import { clampToWalkable } from './collision';
 import { ACCENTS, PLAZA_HALF_SIZE } from './cityLayout';
 
-/** Pointer travel (px) above which a press counts as a camera drag, not a tap. */
-const TAP_MAX_DELTA = 8;
-const TARGET_RADIUS = 0.5;
 const GROUND_SIZE = 400;
 const GROUND_COLOR = '#0a0915';
 
@@ -35,15 +29,9 @@ function PlazaFloor() {
 export function Ground() {
   const quality = useGameStore((state) => state.quality);
 
-  const handleTap = (event: ThreeEvent<MouseEvent>) => {
-    if (event.delta > TAP_MAX_DELTA) return;
-    event.stopPropagation();
-    setMoveTarget(clampToWalkable(new Vector3().copy(event.point), TARGET_RADIUS));
-  };
-
   return (
     <group>
-      <mesh rotation-x={-Math.PI / 2} onClick={handleTap}>
+      <mesh rotation-x={-Math.PI / 2} onClick={tapToMove}>
         <planeGeometry args={[GROUND_SIZE, GROUND_SIZE]} />
         {quality === 'high' ? (
           // Wet asphalt: blurred reflections of the neon above.

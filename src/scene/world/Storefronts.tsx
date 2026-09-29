@@ -1,9 +1,12 @@
 import { Text } from '@react-three/drei';
 import { FONTS } from '@/scene/fonts';
 import { neon } from '@/scene/materials/neon';
+import { requestInteraction } from '@/scene/interaction/interactables';
+import { enterVenue } from '@/scene/interaction/travel';
+import { useInteractable } from '@/scene/interaction/useInteractable';
 import { useGameStore } from '@/scene/store/gameStore';
 import { buildings, type Building } from './cityLayout';
-import { blockTap } from './events';
+import { onTap } from './events';
 import { venueByBuilding, type Venue } from './venues';
 
 const DOOR_WIDTH = 2.4;
@@ -11,6 +14,9 @@ const DOOR_HEIGHT = 3.2;
 const SIGN_Y = 4.6;
 /** Distance the storefront sits in front of the facade to avoid z-fighting. */
 const FACADE_OFFSET = 0.04;
+/** Where the player stands to enter, measured out from the door. */
+const ENTRY_DISTANCE = 1.6;
+const ENTRY_RADIUS = 2.2;
 
 const DECOR_SIGNS = ['NOODLES', 'HOTEL', '24/7', 'ARCADE', 'RAMEN', 'CYBER', 'DATA', 'SUSHI'];
 
@@ -18,21 +24,40 @@ const DECOR_SIGNS = ['NOODLES', 'HOTEL', '24/7', 'ARCADE', 'RAMEN', 'CYBER', 'DA
 const facingRotation = (building: Building) => Math.atan2(building.facing.x, building.facing.z);
 
 function Storefront({ building, venue }: { building: Building; venue: Venue }) {
+  const id = `venue:${building.id}`;
   const quality = useGameStore((state) => state.quality);
+  const isNearby = useGameStore((state) => state.nearbyId === id);
   const glow = neon(venue.accent, 2.6);
-  const frame = neon(venue.accent, 1.6);
+  const frame = neon(venue.accent, isNearby ? 3.2 : 1.6);
+
+  useInteractable({
+    id,
+    label: `Enter ${venue.sign}`,
+    spot: {
+      x: building.door.x + building.facing.x * ENTRY_DISTANCE,
+      z: building.door.z + building.facing.z * ENTRY_DISTANCE,
+    },
+    radius: ENTRY_RADIUS,
+    activate: () => enterVenue(building.id),
+  });
 
   return (
     <group
       position={[building.door.x, 0, building.door.z]}
       rotation-y={facingRotation(building)}
-      onClick={blockTap}
+      onClick={onTap(() => requestInteraction(id, useGameStore.getState().nearbyId))}
     >
       <group position-z={FACADE_OFFSET}>
         {/* Door */}
         <mesh position-y={DOOR_HEIGHT / 2}>
           <planeGeometry args={[DOOR_WIDTH, DOOR_HEIGHT]} />
-          <meshStandardMaterial color="#05040b" metalness={0.9} roughness={0.2} />
+          <meshStandardMaterial
+            color="#05040b"
+            emissive={venue.accent}
+            emissiveIntensity={isNearby ? 0.35 : 0}
+            metalness={0.9}
+            roughness={0.2}
+          />
         </mesh>
         {[-1, 1].map((side) => (
           <mesh key={side} position={[(side * DOOR_WIDTH) / 2, DOOR_HEIGHT / 2, 0.02]}>

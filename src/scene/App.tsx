@@ -1,14 +1,19 @@
 import { Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { PLAYER_SPAWN } from './world/cityLayout';
+import { useActionKeys } from './controls/useActionKeys';
 import { useKeyboardControls } from './controls/useKeyboardControls';
 import { Experience } from './Experience';
 import { useGameStore } from './store/gameStore';
+import { FadeOverlay } from './ui/FadeOverlay';
+import { InteractionPrompt } from './ui/InteractionPrompt';
 import { Joystick } from './ui/Joystick';
 import { LoadingScreen } from './ui/LoadingScreen';
+import { LocationBar } from './ui/LocationBar';
 
 export default function App() {
   useKeyboardControls();
+  useActionKeys();
   const setReady = useGameStore((state) => state.setReady);
   const quality = useGameStore((state) => state.quality);
 
@@ -25,7 +30,10 @@ export default function App() {
           <Experience />
         </Suspense>
       </Canvas>
+      <LocationBar />
+      <InteractionPrompt />
       <Joystick />
+      <FadeOverlay />
       <LoadingScreen />
     </>
   );

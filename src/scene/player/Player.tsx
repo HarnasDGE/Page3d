@@ -2,6 +2,12 @@ import { useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { MathUtils, Vector3, type Group } from 'three';
 import { clearMoveTarget, input } from '@/scene/controls/input';
+import {
+  cancelPendingInteraction,
+  findNearestInteractable,
+  takePendingInteraction,
+} from '@/scene/interaction/interactables';
+import { useGameStore } from '@/scene/store/gameStore';
 import { resolveCollisions } from '@/scene/world/collision';
 import { ACCENTS } from '@/scene/world/cityLayout';
 import { Android } from './Android';
@@ -34,6 +40,13 @@ export function Player() {
     if (!group) return;
     const delta = Math.min(rawDelta, 0.05);
     const { keys, joystick } = input;
+    const { isFading, nearbyId, setNearby } = useGameStore.getState();
+
+    if (player.teleported) {
+      player.teleported = false;
+      velocity.set(0, 0, 0);
+      stuckTime.current = 0;
+    }
 
     // Manual input in camera space (x: right, y: forward).
     const inputX = Number(keys.right) - Number(keys.left) + joystick.x;
@@ -43,8 +56,11 @@ export function Player() {
     let targetSpeed = 0;
     direction.set(0, 0, 0);
 
-    if (inputLength > 0.05) {
+    if (isFading) {
+      // Frozen while the screen is black and the location swaps.
+    } else if (inputLength > 0.05) {
       clearMoveTarget();
+      cancelPendingInteraction();
       const sin = Math.sin(cameraOrbit.yaw);
       const cos = Math.cos(cameraOrbit.yaw);
       // forward = (-sin, -cos), right = (cos, -sin)
@@ -86,16 +102,26 @@ export function Player() {
       stuckTime.current = 0;
     }
 
-    group.position.copy(player.position);
-
     if (velocity.lengthSq() > 0.05) {
       const heading = Math.atan2(velocity.x, velocity.z);
-      group.rotation.y += angleDelta(group.rotation.y, heading) * Math.min(TURN_SPEED * delta, 1);
+      player.heading += angleDelta(player.heading, heading) * Math.min(TURN_SPEED * delta, 1);
     }
+
+    group.position.copy(player.position);
+    group.rotation.y = player.heading;
+
+    if (isFading) return;
+
+    const nearby = findNearestInteractable(player.position.x, player.position.z);
+    const nextNearbyId = nearby?.id ?? null;
+    if (nextNearbyId !== nearbyId) setNearby(nextNearbyId);
+
+    // A tapped door / terminal fires as soon as the android reaches it.
+    takePendingInteraction(nextNearbyId)?.activate();
   }, -1);
 
   return (
-    <group ref={root} position={player.position.toArray()}>
+    <group ref={root} position={player.position.toArray()} rotation-y={player.heading}>
       <Android />
       <pointLight position={[0, 2.2, 0.6]} color={ACCENTS.cyan} intensity={6} distance={7} />
     </group>

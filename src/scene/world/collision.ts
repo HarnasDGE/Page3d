@@ -1,6 +1,21 @@
 import type { Vector3 } from 'three';
 import { obstacles, walkableAreas, type Rect } from './cityLayout';
 
+/** Where the player may walk: a union of floor rects minus solid obstacles. */
+export interface CollisionWorld {
+  walkable: Rect[];
+  obstacles: Rect[];
+}
+
+export const cityWorld: CollisionWorld = { walkable: walkableAreas, obstacles };
+
+let activeWorld: CollisionWorld = cityWorld;
+
+/** Swapped synchronously with the player teleport when changing location. */
+export function setCollisionWorld(world: CollisionWorld) {
+  activeWorld = world;
+}
+
 const clamp = (v: number, min: number, max: number) => Math.min(Math.max(v, min), max);
 
 /** Keeps a circle of `radius` inside the walkable union. Mutates `position`. */
@@ -9,7 +24,7 @@ function constrainToWalkable(position: Vector3, radius: number) {
   let bestZ = position.z;
   let bestDistSq = Infinity;
 
-  for (const area of walkableAreas) {
+  for (const area of activeWorld.walkable) {
     const x = clamp(position.x, area.minX + radius, area.maxX - radius);
     const z = clamp(position.z, area.minZ + radius, area.maxZ - radius);
     const distSq = (x - position.x) ** 2 + (z - position.z) ** 2;
@@ -55,7 +70,7 @@ function pushOutOfRect(position: Vector3, radius: number, rect: Rect) {
 }
 
 export function resolveCollisions(position: Vector3, radius: number) {
-  for (const obstacle of obstacles) pushOutOfRect(position, radius, obstacle);
+  for (const obstacle of activeWorld.obstacles) pushOutOfRect(position, radius, obstacle);
   constrainToWalkable(position, radius);
 }
 

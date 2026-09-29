@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="864" viewBox="0 0 512 864">
+  <defs>
+    <linearGradient id="glass" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1b1140"/>
+      <stop offset="1" stop-color="#080418"/>
+    </linearGradient>
+    <filter id="glow"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <g id="can">
+      <rect x="-22" y="-38" width="44" height="76" rx="8"/>
+      <rect x="-22" y="-8" width="44" height="12" fill="#ffffff" opacity="0.85"/>
+    </g>
+  </defs>
+  <rect width="512" height="864" fill="#141026"/>
+  <!-- Header -->
+  <rect x="24" y="24" width="464" height="120" rx="14" fill="#07030f"/>
+  <g filter="url(#glow)" font-family="Arial Black, Arial, sans-serif" text-anchor="middle">
+    <text x="256" y="96" font-size="58" fill="#ff2bd6">VOLT</text>
+    <text x="256" y="130" font-size="22" fill="#00f0ff" letter-spacing="10">ENERGY DRINK</text>
+  </g>
+  <!-- Display window with rows of cans -->
+  <rect x="24" y="168" width="340" height="520" rx="12" fill="url(#glass)" stroke="#00f0ff" stroke-width="3"/>
+  <g>
+    <g fill="#ff2bd6"><use href="#can" x="84" y="240"/><use href="#can" x="164" y="240"/><use href="#can" x="244" y="240"/><use href="#can" x="304" y="240"/></g>
+    <g fill="#00c8d6"><use href="#can" x="84" y="360"/><use href="#can" x="164" y="360"/><use href="#can" x="244" y="360"/><use href="#can" x="304" y="360"/></g>
+    <g fill="#ffb800"><use href="#can" x="84" y="480"/><use href="#can" x="164" y="480"/><use href="#can" x="244" y="480"/><use href="#can" x="304" y="480"/></g>
+    <g fill="#8b5cff"><use href="#can" x="84" y="600"/><use href="#can" x="164" y="600"/><use href="#can" x="244" y="600"/><use href="#can" x="304" y="600"/></g>
+    <g stroke="#2d2458" stroke-width="4"><path d="M40 296 H348 M40 416 H348 M40 536 H348 M40 656 H348"/></g>
+  </g>
+  <!-- Control column -->
+  <rect x="384" y="168" width="104" height="520" rx="12" fill="#0c0820"/>
+  <rect x="400" y="190" width="72" height="44" rx="6" fill="#022a22"/>
+  <text x="436" y="220" text-anchor="middle" font-family="Courier New, monospace" font-weight="bold" font-size="22" fill="#1cff9e">€2</text>
+  <g fill="#2a2248" stroke="#00f0ff" stroke-width="2">
+    <rect x="404" y="260" width="28" height="22" rx="4"/><rect x="440" y="260" width="28" height="22" rx="4"/>
+    <rect x="404" y="292" width="28" height="22" rx="4"/><rect x="440" y="292" width="28" height="22" rx="4"/>
+    <rect x="404" y="324" width="28" height="22" rx="4"/><rect x="440" y="324" width="28" height="22" rx="4"/>
+  </g>
+  <rect x="420" y="380" width="32" height="70" rx="6" fill="#050310" stroke="#ffb800" stroke-width="3"/>
+  <rect x="432" y="392" width="8" height="46" rx="3" fill="#ffb800"/>
+  <circle cx="436" cy="520" r="26" fill="#ff2bd6" filter="url(#glow)"/>
+  <text x="436" y="528" text-anchor="middle" font-family="Arial Black, Arial, sans-serif" font-size="18" fill="#ffffff">GO</text>
+  <!-- Tray -->
+  <rect x="24" y="712" width="464" height="128" rx="12" fill="#07030f" stroke="#ff2bd6" stroke-width="3"/>
+  <rect x="64" y="744" width="384" height="64" rx="8" fill="#000000"/>
+  <text x="256" y="786" text-anchor="middle" font-family="Arial Black, Arial, sans-serif" font-size="20" fill="#5b4a8c" letter-spacing="8">PUSH</text>
+</svg>

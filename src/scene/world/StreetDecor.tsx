@@ -1,8 +1,10 @@
-import { useLayoutEffect, useRef } from 'react';
+import { useLayoutEffect, useMemo, useRef } from 'react';
+import { useFrame } from '@react-three/fiber';
 import { Text } from '@react-three/drei';
-import { Object3D, type InstancedMesh } from 'three';
+import { MeshBasicMaterial, Object3D, type InstancedMesh } from 'three';
 import { FONTS } from '@/scene/fonts';
 import { neon } from '@/scene/materials/neon';
+import { usePropsStore } from '@/scene/props/propsStore';
 import {
   BUILDING_DEPTH,
   BUILDING_GAP,
@@ -22,9 +24,9 @@ const STREET_END = -PLAZA_HALF_SIZE - STREET_LENGTH;
 const DASH_LENGTH = 2;
 const DASH_STEP = 5;
 const DASH_COUNT = Math.floor(STREET_LENGTH / DASH_STEP);
-const LAMP_X = STREET_HALF_WIDTH - 0.15;
+export const LAMP_X = STREET_HALF_WIDTH - 0.15;
 /** Lamps stand in the gaps between buildings so they never block a door. */
-const LAMP_Z = [0, 1, 2].map(
+export const LAMP_Z = [0, 1, 2].map(
   (i) => STREET_START - 1 - BUILDING_DEPTH - BUILDING_GAP / 2 - i * (BUILDING_DEPTH + BUILDING_GAP),
 );
 
@@ -64,8 +66,29 @@ function StreetMarkings({ accent }: { accent: string }) {
   );
 }
 
-function StreetLamps({ accent }: { accent: string }) {
+/** About Street's lamps flicker until the broken power box is fixed. */
+const POWER_OUTAGE_STREET: Street['id'] = 'about';
+
+function StreetLamps({ accent, streetId }: { accent: string; streetId: Street['id'] }) {
   const lamps = LAMP_Z.flatMap((z) => [-1, 1].map((side) => ({ z, side })));
+  const headMaterial = useMemo(
+    () => new MeshBasicMaterial({ color: neon(accent, 3), toneMapped: false }),
+    [accent],
+  );
+  const lit = useMemo(() => neon(accent, 3), [accent]);
+
+  useFrame(({ clock }) => {
+    if (streetId !== POWER_OUTAGE_STREET) return;
+    if (usePropsStore.getState().isPowerFixed) {
+      headMaterial.color.copy(lit);
+      return;
+    }
+    // Brown-out: mostly dim with nervous flashes.
+    const t = clock.elapsedTime;
+    const flash = Math.sin(t * 23) * Math.sin(t * 7.3) > 0.55;
+    headMaterial.color.copy(lit).multiplyScalar(flash ? 0.8 : 0.08);
+  });
+
   return (
     <group>
       {lamps.map(({ z, side }) => (
@@ -78,9 +101,8 @@ function StreetLamps({ accent }: { accent: string }) {
             <boxGeometry args={[1.3, 0.08, 0.08]} />
             <meshStandardMaterial color={POLE_COLOR} metalness={0.8} roughness={0.4} />
           </mesh>
-          <mesh position={[-side * 1.15, 5.9, 0]}>
+          <mesh position={[-side * 1.15, 5.9, 0]} material={headMaterial}>
             <boxGeometry args={[0.5, 0.08, 0.22]} />
-            <meshBasicMaterial color={neon(accent, 3)} toneMapped={false} />
           </mesh>
         </group>
       ))}
@@ -130,7 +152,7 @@ export function StreetDecor() {
       {streets.map((street) => (
         <group key={street.id} rotation-y={STREET_ROTATION[street.id]}>
           <StreetMarkings accent={street.accent} />
-          <StreetLamps accent={street.accent} />
+          <StreetLamps accent={street.accent} streetId={street.id} />
           <StreetGate street={street} />
         </group>
       ))}

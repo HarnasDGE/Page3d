@@ -13,6 +13,7 @@ import graffitiNeon from '@/assets/svg/facade/graffiti-neon.svg?url';
 import graffitiTag from '@/assets/svg/facade/graffiti-tag.svg?url';
 import shutter from '@/assets/svg/facade/shutter.svg?url';
 import avatar from '@/assets/svg/interiors/avatar.svg?url';
+import vendingFront from '@/assets/svg/props/vending-front.svg?url';
 import projectAurora from '@/assets/svg/interiors/project-aurora.svg?url';
 import projectPulse from '@/assets/svg/interiors/project-pulse.svg?url';
 import projectVoltage from '@/assets/svg/interiors/project-voltage.svg?url';
@@ -28,6 +29,8 @@ export const GRAFFITI = [graffitiNeon, graffitiTag] as const;
 export const FACADE_TEXTURES = { shutter } as const;
 
 export const INTERIOR_TEXTURES = { avatar } as const;
+
+export const PROP_TEXTURES = { vendingFront } as const;
 
 export const PROJECT_IMAGES: Record<ProjectId, string> = {
   aurora: projectAurora,

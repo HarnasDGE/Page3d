@@ -1,5 +1,6 @@
 import { clearMoveTarget, resetInput } from '@/scene/controls/input';
 import { ROOM_SPAWN, roomWorldFor } from '@/scene/interiors/roomLayout';
+import { usePropsStore } from '@/scene/props/propsStore';
 import { ROOM_CAMERA, STREET_CAMERA, teleportPlayer } from '@/scene/player/playerState';
 import { useGameStore, type Location } from '@/scene/store/gameStore';
 import { buildings } from '@/scene/world/cityLayout';
@@ -18,6 +19,8 @@ function travel(location: Location, placePlayer: () => void) {
   const { isFading, setFading, setLocation } = useGameStore.getState();
   if (isFading) return;
 
+  // Items can't be carried indoors; the can stays on the street.
+  usePropsStore.getState().dropHeld();
   resetInput();
   clearMoveTarget();
   cancelPendingInteraction();

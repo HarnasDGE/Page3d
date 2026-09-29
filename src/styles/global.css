@@ -56,3 +56,39 @@
     }
   }
 }
+
+/* Electric shock flash and toast entrance (scene overlays). */
+@keyframes shock-flash {
+  0% {
+    opacity: 0.85;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+
+@layer components {
+  .shock-flash {
+    background: radial-gradient(circle, #ffffff 0%, #9ff7ff 45%, transparent 80%);
+    opacity: 0;
+    animation: shock-flash 450ms ease-out;
+  }
+
+  .toast-in {
+    animation: toast-in 250ms ease-out;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shock-flash,
+  .toast-in {
+    animation: none;
+  }
+}

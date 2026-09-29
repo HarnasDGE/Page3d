@@ -7,6 +7,9 @@ import {
   findNearestInteractable,
   takePendingInteraction,
 } from '@/scene/interaction/interactables';
+import { HAND_OFFSET } from '@/scene/props/carry';
+import { CanModel } from '@/scene/props/components/CanModel';
+import { usePropsStore } from '@/scene/props/propsStore';
 import { useGameStore } from '@/scene/store/gameStore';
 import { resolveCollisions } from '@/scene/world/collision';
 import { ACCENTS } from '@/scene/world/cityLayout';
@@ -20,6 +23,8 @@ const ARRIVE_DISTANCE = 0.25;
 const RUN_TO_TARGET_DISTANCE = 10;
 /** Give up on a tap target after being blocked for this long (s). */
 const STUCK_TIMEOUT = 0.4;
+/** Speed multiplier while the energy drink boost lasts. */
+const BOOST_MULTIPLIER = 1.45;
 
 const direction = new Vector3();
 const velocity = new Vector3();
@@ -32,6 +37,7 @@ function angleDelta(from: number, to: number) {
 
 export function Player() {
   const root = useRef<Group>(null);
+  const heldCan = usePropsStore((state) => state.cans.find((can) => can.id === state.heldCanId));
   const stuckTime = useRef(0);
 
   // Runs before the camera rig (default priority 0).
@@ -41,8 +47,9 @@ export function Player() {
     const delta = Math.min(rawDelta, 0.05);
     const { keys, joystick } = input;
     const { isFading, panel, nearbyId, setNearby } = useGameStore.getState();
-    // Frozen while the screen fades or a content panel is open.
-    const isFrozen = isFading || panel !== null;
+    const { minigame, boostUntil } = usePropsStore.getState();
+    // Frozen while the screen fades, a content panel is open or a minigame runs.
+    const isFrozen = isFading || panel !== null || minigame !== null;
 
     if (player.teleported) {
       player.teleported = false;
@@ -86,6 +93,8 @@ export function Player() {
       }
     }
 
+    if (Date.now() < boostUntil) targetSpeed *= BOOST_MULTIPLIER;
+
     velocity.x = MathUtils.damp(velocity.x, direction.x * targetSpeed, ACCELERATION, delta);
     velocity.z = MathUtils.damp(velocity.z, direction.z * targetSpeed, ACCELERATION, delta);
 
@@ -111,6 +120,8 @@ export function Player() {
 
     group.position.copy(player.position);
     group.rotation.y = player.heading;
+    // Out of the way while the camera is in a minigame close-up.
+    group.visible = minigame === null;
 
     if (isFrozen) return;
 
@@ -124,7 +135,12 @@ export function Player() {
 
   return (
     <group ref={root} position={player.position.toArray()} rotation-y={player.heading}>
-      <Android />
+      <Android isCarrying={heldCan !== undefined} />
+      {heldCan && (
+        <group position={HAND_OFFSET.toArray()}>
+          <CanModel variant={heldCan.variant} />
+        </group>
+      )}
       <pointLight position={[0, 2.2, 0.6]} color={ACCENTS.cyan} intensity={6} distance={7} />
     </group>
   );

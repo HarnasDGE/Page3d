@@ -1,4 +1,5 @@
 import { getInteractable } from '@/scene/interaction/interactables';
+import { usePropsStore } from '@/scene/props/propsStore';
 import { useGameStore } from '@/scene/store/gameStore';
 
 /** "Press E" prompt on desktop, tappable button on touch screens. */
@@ -6,9 +7,10 @@ export function InteractionPrompt() {
   const nearbyId = useGameStore((state) => state.nearbyId);
   const isFading = useGameStore((state) => state.isFading);
   const hasPanel = useGameStore((state) => state.panel !== null);
+  const hasMinigame = usePropsStore((state) => state.minigame !== null);
   const item = getInteractable(nearbyId);
 
-  if (!item || isFading || hasPanel) return null;
+  if (!item || isFading || hasPanel || hasMinigame) return null;
 
   return (
     <div className="pointer-events-none fixed inset-x-0 bottom-24 z-20 flex justify-center px-4 sm:bottom-10">

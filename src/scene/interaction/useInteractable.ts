@@ -18,6 +18,7 @@ export function useInteractable(interactable: Interactable) {
         radius,
         spot: { x, z },
         activate: () => latest.current.activate(),
+        isEnabled: () => latest.current.isEnabled?.() ?? true,
       }),
     [id, label, radius, x, z],
   );

@@ -12,7 +12,10 @@ import { InteractionPrompt } from './ui/InteractionPrompt';
 import { Joystick } from './ui/Joystick';
 import { LoadingScreen } from './ui/LoadingScreen';
 import { LocationBar } from './ui/LocationBar';
+import { MinigameOverlay } from './ui/MinigameOverlay';
 import { PanelHost } from './ui/panels/PanelHost';
+import { StatusBar } from './ui/StatusBar';
+import { Toasts } from './ui/Toasts';
 
 interface AppProps {
   posts: BlogPost[];
@@ -44,6 +47,9 @@ export default function App({ posts }: AppProps) {
       </Canvas>
       <LocationBar />
       <InteractionPrompt />
+      <StatusBar />
+      <MinigameOverlay />
+      <Toasts />
       <Joystick />
       <PanelHost />
       <FadeOverlay />

@@ -19,7 +19,7 @@ function Limb({ width, length, color }: { width: number; length: number; color: 
 }
 
 /** Procedural android avatar with idle / walk / run animation. Faces +Z. */
-export function Android() {
+export function Android({ isCarrying = false }: { isCarrying?: boolean }) {
   const body = useRef<Group>(null);
   const head = useRef<Group>(null);
   const leftLeg = useRef<Group>(null);
@@ -42,7 +42,8 @@ export function Android() {
     }
     if (leftArm.current && rightArm.current) {
       leftArm.current.rotation.x = -swing * 0.9;
-      rightArm.current.rotation.x = swing * 0.9;
+      // The carrying arm (at +X) holds items out in front.
+      rightArm.current.rotation.x = isCarrying ? -1.3 + swing * 0.1 : swing * 0.9;
     }
     if (body.current) {
       body.current.position.y = bob + breathe;

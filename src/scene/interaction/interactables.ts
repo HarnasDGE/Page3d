@@ -13,6 +13,8 @@ export interface Interactable {
   spot: { x: number; z: number };
   radius: number;
   activate: () => void;
+  /** Temporarily hide it (e.g. can pick-ups while already holding one). */
+  isEnabled?: () => boolean;
 }
 
 const registry = new Map<string, Interactable>();
@@ -34,6 +36,7 @@ export function findNearestInteractable(x: number, z: number): Interactable | nu
   let nearest: Interactable | null = null;
   let nearestDistSq = Infinity;
   for (const item of registry.values()) {
+    if (item.isEnabled && !item.isEnabled()) continue;
     const distSq = (item.spot.x - x) ** 2 + (item.spot.z - z) ** 2;
     if (distSq <= item.radius ** 2 && distSq < nearestDistSq) {
       nearest = item;
@@ -46,7 +49,7 @@ export function findNearestInteractable(x: number, z: number): Interactable | nu
 /** Tap / click on an interactable: use it if close, otherwise walk there first. */
 export function requestInteraction(id: string, nearbyId: string | null) {
   const item = registry.get(id);
-  if (!item) return;
+  if (!item || (item.isEnabled && !item.isEnabled())) return;
   if (nearbyId === id) {
     pendingId = null;
     item.activate();

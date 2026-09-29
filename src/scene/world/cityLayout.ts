@@ -42,6 +42,18 @@ export const facingRotation = (building: Building) => Math.atan2(building.facing
 export const facadeLength = (building: Building) =>
   building.facing.x !== 0 ? building.depth : building.width;
 
+/**
+ * World position of a point given in a building's facade space:
+ * x runs along the facade (from the door), z points out towards the street.
+ */
+export function facadePoint(building: Building, alongX: number, outZ: number): Point {
+  const angle = facingRotation(building);
+  return {
+    x: building.door.x + alongX * Math.cos(angle) + outZ * Math.sin(angle),
+    z: building.door.z - alongX * Math.sin(angle) + outZ * Math.cos(angle),
+  };
+}
+
 export interface Street {
   id: StreetId;
   label: string;
@@ -254,11 +266,25 @@ const billboardLegs: Rect[] = [-1, 1].map((side) => {
   return { minX: x - 0.35, maxX: x + 0.35, minZ: z - 0.35, maxZ: z + 0.35 };
 });
 
+/** Interactive street furniture in the plaza corners, each facing the plaza centre. */
+export const VENDING_MACHINE = { x: 11.2, z: 11.2, rotationY: -Math.PI * 0.75 } as const;
+export const BASKETBALL_HOOP = { x: -11.4, z: -11.4, rotationY: Math.PI * 0.25 } as const;
+export const TRASH_BIN = { x: -11, z: 10.6 } as const;
+
+const square = (x: number, z: number, half: number): Rect => ({
+  minX: x - half,
+  maxX: x + half,
+  minZ: z - half,
+  maxZ: z + half,
+});
+
 /** Solid props standing inside walkable areas. */
 export const obstacles: Rect[] = [
   // Central hologram pedestal.
   { minX: -2, maxX: 2, minZ: -2, maxZ: 2 },
   ...billboardLegs,
+  square(VENDING_MACHINE.x, VENDING_MACHINE.z, 0.9),
+  square(BASKETBALL_HOOP.x, BASKETBALL_HOOP.z, 0.3),
 ];
 
 export const PLAYER_SPAWN = { x: 0, z: 8 } as const;

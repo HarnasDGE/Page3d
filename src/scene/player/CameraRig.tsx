@@ -1,6 +1,8 @@
 import { useEffect } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import { MathUtils, PerspectiveCamera, Vector3 } from 'three';
+import { ELECTRICAL_BOX } from '@/scene/props/propLayout';
+import { usePropsStore } from '@/scene/props/propsStore';
 import { resolveCollisions } from '@/scene/world/collision';
 import { cameraOrbit, player } from './playerState';
 
@@ -13,6 +15,13 @@ const FOLLOW_DAMPING = 8;
 const CAMERA_RADIUS = 0.3;
 const LANDSCAPE_FOV = 55;
 const PORTRAIT_FOV = 72;
+
+/** Camera shake after an electric shock. */
+const SHAKE_MS = 450;
+const SHAKE_AMOUNT = 0.12;
+/** Close-up of the power box for the wiring minigame. */
+const MINIGAME_CAMERA = new Vector3(ELECTRICAL_BOX.camera.x, ELECTRICAL_BOX.y + 0.15, ELECTRICAL_BOX.camera.z);
+const MINIGAME_TARGET = new Vector3(ELECTRICAL_BOX.x, ELECTRICAL_BOX.y, ELECTRICAL_BOX.z);
 
 const desired = new Vector3();
 const lookAt = new Vector3();
@@ -83,6 +92,17 @@ export function CameraRig() {
     resolveCollisions(desired, CAMERA_RADIUS);
 
     lookAt.set(player.position.x, lookHeight, player.position.z);
+
+    const { minigame, shockAt } = usePropsStore.getState();
+    if (minigame === 'wiring') {
+      desired.copy(MINIGAME_CAMERA);
+      lookAt.copy(MINIGAME_TARGET);
+    }
+    const shake = Date.now() - shockAt < SHAKE_MS ? SHAKE_AMOUNT : 0;
+    if (shake) {
+      desired.x += (Math.random() - 0.5) * shake;
+      desired.y += (Math.random() - 0.5) * shake;
+    }
 
     if (cameraOrbit.snap) {
       cameraOrbit.snap = false;

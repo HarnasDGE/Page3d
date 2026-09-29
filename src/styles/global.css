@@ -26,3 +26,33 @@
     touch-action: none;
   }
 }
+
+/* Long-form content inside the holographic reader panel. */
+@layer components {
+  .prose-neon {
+    @apply space-y-4 text-lg leading-relaxed text-white/85;
+
+    & h2 {
+      @apply pt-2 font-display text-base font-bold tracking-wider text-neon-amber uppercase;
+    }
+    & a {
+      @apply text-neon-cyan underline underline-offset-4;
+    }
+    & strong {
+      @apply text-white;
+    }
+    & ul,
+    & ol {
+      @apply space-y-1 pl-6;
+    }
+    & ul {
+      @apply list-disc marker:text-neon-amber;
+    }
+    & ol {
+      @apply list-decimal marker:text-neon-amber;
+    }
+    & code {
+      @apply rounded bg-white/10 px-1.5 py-0.5 font-mono text-[0.9em] text-neon-cyan;
+    }
+  }
+}

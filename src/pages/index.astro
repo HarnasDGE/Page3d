@@ -3,6 +3,9 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import Hud from '@/components/ui/Hud.astro';
 import App from '@/scene/App';
 import { profile } from '@/data/profile';
+import { getPosts } from '@/lib/blog';
+
+const posts = await getPosts();
 ---
 
 <BaseLayout
@@ -10,7 +13,7 @@ import { profile } from '@/data/profile';
   description={`${profile.name} — ${profile.tagline} Explore the Neon District portfolio in 3D.`}
 >
   <main>
-    <App client:only="react" />
+    <App client:only="react" posts={posts} />
     <Hud />
   </main>
 </BaseLayout>

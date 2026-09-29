@@ -17,6 +17,8 @@ export const cameraOrbit = {
   yaw: 0,
   pitch: 0.38,
   distance: 7.5,
+  /** Height of the point the camera looks at (and orbits around). */
+  lookHeight: 1.4,
   /** Ceiling for the camera, e.g. inside rooms. */
   maxHeight: Infinity,
   /** When true the rig jumps straight to its target instead of easing. */
@@ -27,15 +29,23 @@ export const PLAYER_RADIUS = 0.45;
 export const WALK_SPEED = 4.5;
 export const RUN_SPEED = 8.5;
 
-export const STREET_CAMERA = { distance: 7.5, maxHeight: Infinity } as const;
-export const ROOM_CAMERA = { distance: 5.5, maxHeight: 5.8 } as const;
+interface CameraPreset {
+  distance: number;
+  maxHeight: number;
+  lookHeight: number;
+  pitch: number;
+}
+
+export const STREET_CAMERA: CameraPreset = { distance: 7.5, maxHeight: Infinity, lookHeight: 1.4, pitch: 0.38 };
+/** Rooms: look higher and flatter so the wall panels stay in frame. */
+export const ROOM_CAMERA: CameraPreset = { distance: 6, maxHeight: 5.6, lookHeight: 2.3, pitch: 0.12 };
 
 interface TeleportOptions {
   x: number;
   z: number;
   heading: number;
   cameraYaw: number;
-  camera: { distance: number; maxHeight: number };
+  camera: CameraPreset;
 }
 
 /** Moves the player instantly (used behind the fade when changing location). */
@@ -47,10 +57,8 @@ export function teleportPlayer({ x, z, heading, cameraYaw, camera }: TeleportOpt
   cameraOrbit.yaw = cameraYaw;
   cameraOrbit.distance = camera.distance;
   cameraOrbit.maxHeight = camera.maxHeight;
+  cameraOrbit.lookHeight = camera.lookHeight;
+  cameraOrbit.pitch = camera.pitch;
   cameraOrbit.snap = true;
 }
 
-// Dev-only handle for debugging and automated browser checks (teleports etc.).
-if (import.meta.env.DEV && typeof window !== 'undefined') {
-  Object.assign(window, { __neon: { player, cameraOrbit } });
-}

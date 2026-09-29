@@ -1,17 +1,29 @@
-import { Suspense } from 'react';
+import { Suspense, useEffect } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { PLAYER_SPAWN } from './world/cityLayout';
 import { useActionKeys } from './controls/useActionKeys';
 import { useKeyboardControls } from './controls/useKeyboardControls';
 import { Experience } from './Experience';
+import type { BlogPost } from '@/types/blog';
+import { useContentStore } from './store/contentStore';
 import { useGameStore } from './store/gameStore';
 import { FadeOverlay } from './ui/FadeOverlay';
 import { InteractionPrompt } from './ui/InteractionPrompt';
 import { Joystick } from './ui/Joystick';
 import { LoadingScreen } from './ui/LoadingScreen';
 import { LocationBar } from './ui/LocationBar';
+import { PanelHost } from './ui/panels/PanelHost';
 
-export default function App() {
+interface AppProps {
+  posts: BlogPost[];
+}
+
+if (import.meta.env.DEV) {
+  import('./debug').then(({ exposeDebugHandle }) => exposeDebugHandle());
+}
+
+export default function App({ posts }: AppProps) {
+  useEffect(() => useContentStore.getState().setPosts(posts), [posts]);
   useKeyboardControls();
   useActionKeys();
   const setReady = useGameStore((state) => state.setReady);
@@ -33,6 +45,7 @@ export default function App() {
       <LocationBar />
       <InteractionPrompt />
       <Joystick />
+      <PanelHost />
       <FadeOverlay />
       <LoadingScreen />
     </>

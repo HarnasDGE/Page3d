@@ -4,8 +4,7 @@ import { MathUtils, PerspectiveCamera, Vector3 } from 'three';
 import { resolveCollisions } from '@/scene/world/collision';
 import { cameraOrbit, player } from './playerState';
 
-const LOOK_HEIGHT = 1.4;
-const MIN_PITCH = 0.12;
+const MIN_PITCH = 0.02;
 const MAX_PITCH = 1.15;
 const YAW_SENSITIVITY = 0.006;
 const PITCH_SENSITIVITY = 0.004;
@@ -73,17 +72,17 @@ export function CameraRig() {
 
   useFrame((_, rawDelta) => {
     const delta = Math.min(rawDelta, 0.05);
-    const { yaw, pitch, distance, maxHeight } = cameraOrbit;
+    const { yaw, pitch, distance, maxHeight, lookHeight } = cameraOrbit;
     const horizontal = Math.cos(pitch) * distance;
 
     desired.set(
       player.position.x + Math.sin(yaw) * horizontal,
-      Math.min(Math.sin(pitch) * distance + LOOK_HEIGHT, maxHeight),
+      Math.min(Math.sin(pitch) * distance + lookHeight, maxHeight),
       player.position.z + Math.cos(yaw) * horizontal,
     );
     resolveCollisions(desired, CAMERA_RADIUS);
 
-    lookAt.set(player.position.x, LOOK_HEIGHT, player.position.z);
+    lookAt.set(player.position.x, lookHeight, player.position.z);
 
     if (cameraOrbit.snap) {
       cameraOrbit.snap = false;

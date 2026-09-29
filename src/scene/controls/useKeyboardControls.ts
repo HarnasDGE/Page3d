@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { useGameStore } from '@/scene/store/gameStore';
 import { input, resetInput } from './input';
 
 type KeyAction = keyof typeof input.keys;
@@ -27,6 +28,8 @@ export function useKeyboardControls() {
   useEffect(() => {
     const handle = (pressed: boolean) => (event: KeyboardEvent) => {
       if (isTypingTarget(event.target)) return;
+      // Let arrows scroll the open reader / form instead of moving the android.
+      if (pressed && useGameStore.getState().panel) return;
       const action = KEY_MAP[event.code];
       if (!action) return;
       event.preventDefault();

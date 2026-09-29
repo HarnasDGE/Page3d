@@ -1,9 +1,10 @@
 import { clearMoveTarget, resetInput } from '@/scene/controls/input';
-import { ROOM_SPAWN, roomWorld } from '@/scene/interiors/roomLayout';
+import { ROOM_SPAWN, roomWorldFor } from '@/scene/interiors/roomLayout';
 import { ROOM_CAMERA, STREET_CAMERA, teleportPlayer } from '@/scene/player/playerState';
 import { useGameStore, type Location } from '@/scene/store/gameStore';
 import { buildings } from '@/scene/world/cityLayout';
 import { cityWorld, setCollisionWorld } from '@/scene/world/collision';
+import { venueByBuilding } from '@/scene/world/venues';
 import { cancelPendingInteraction } from './interactables';
 
 /** Must match the fade duration in FadeOverlay. */
@@ -30,8 +31,11 @@ function travel(location: Location, placePlayer: () => void) {
 }
 
 export function enterVenue(buildingId: string) {
+  const venue = venueByBuilding.get(buildingId);
+  if (!venue) return;
+
   travel({ kind: 'interior', buildingId }, () => {
-    setCollisionWorld(roomWorld);
+    setCollisionWorld(roomWorldFor(venue.kind));
     teleportPlayer({ ...ROOM_SPAWN, cameraYaw: 0, camera: ROOM_CAMERA });
   });
 }

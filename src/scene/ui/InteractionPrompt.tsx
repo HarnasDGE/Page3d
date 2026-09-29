@@ -5,9 +5,10 @@ import { useGameStore } from '@/scene/store/gameStore';
 export function InteractionPrompt() {
   const nearbyId = useGameStore((state) => state.nearbyId);
   const isFading = useGameStore((state) => state.isFading);
+  const hasPanel = useGameStore((state) => state.panel !== null);
   const item = getInteractable(nearbyId);
 
-  if (!item || isFading) return null;
+  if (!item || isFading || hasPanel) return null;
 
   return (
     <div className="pointer-events-none fixed inset-x-0 bottom-24 z-20 flex justify-center px-4 sm:bottom-10">

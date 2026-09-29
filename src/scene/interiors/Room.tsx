@@ -92,18 +92,19 @@ function EdgeStrips({ accent }: { accent: string }) {
   );
 }
 
-/** Vertical neon light bars on the side and back walls. */
+/** Vertical neon light bars near the room corners, clear of the wall panels. */
 function WallLights({ accent }: { accent: string }) {
   const color = neon(accent, 1.8);
   const height = ROOM.height - 1.6;
-  const bars: [number, number, number][] = [];
-
-  for (let z = ROOM.minZ + 3; z < ROOM.maxZ - 2; z += 4) {
-    bars.push([-ROOM.halfWidth + 0.06, ROOM.height / 2, z], [ROOM.halfWidth - 0.06, ROOM.height / 2, z]);
-  }
-  for (let x = -ROOM.halfWidth + 3; x < ROOM.halfWidth - 1; x += 3) {
-    bars.push([x, ROOM.height / 2, ROOM.minZ + 0.06]);
-  }
+  const inset = 0.06;
+  const bars: [number, number, number][] = [
+    [-ROOM.halfWidth + inset, ROOM.height / 2, ROOM.minZ + 0.8],
+    [ROOM.halfWidth - inset, ROOM.height / 2, ROOM.minZ + 0.8],
+    [-ROOM.halfWidth + inset, ROOM.height / 2, ROOM.maxZ - 1.2],
+    [ROOM.halfWidth - inset, ROOM.height / 2, ROOM.maxZ - 1.2],
+    [-ROOM.halfWidth + 0.8, ROOM.height / 2, ROOM.minZ + inset],
+    [ROOM.halfWidth - 0.8, ROOM.height / 2, ROOM.minZ + inset],
+  ];
 
   return (
     <group>

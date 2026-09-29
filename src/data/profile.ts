@@ -4,4 +4,37 @@ export const profile = {
   tagline: 'I build fast, memorable websites and web apps.',
   location: 'Remote · EU',
   email: 'hello@alexcarter.dev',
+  responseTime: 'Replies within 24h',
+  bio: [
+    "I'm a full-stack developer with 8+ years of shipping websites, stores and web apps for startups and agencies.",
+    'I care about speed, accessibility and interfaces people enjoy. This district is my playground for all three.',
+  ],
+  stats: [
+    { value: '8+', label: 'years' },
+    { value: '120+', label: 'projects' },
+    { value: '98', label: 'avg. Lighthouse' },
+  ],
+  skills: [
+    'TypeScript',
+    'React',
+    'Astro',
+    'Next.js',
+    'Node.js',
+    'Tailwind CSS',
+    'Three.js',
+    'PostgreSQL',
+    'Headless CMS',
+    'Shopify',
+    'Figma',
+    'CI/CD',
+  ],
+  experience: [
+    { period: '2022 — now', role: 'Freelance Developer', company: 'Self-employed' },
+    { period: '2019 — 2022', role: 'Senior Frontend Engineer', company: 'Pixel Harbor Studio' },
+    { period: '2016 — 2019', role: 'Web Developer', company: 'Brightline Agency' },
+  ],
+  socials: [
+    { label: 'GitHub', url: 'https://github.com/' },
+    { label: 'LinkedIn', url: 'https://www.linkedin.com/' },
+  ],
 } as const;

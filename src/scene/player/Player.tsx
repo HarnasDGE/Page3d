@@ -40,7 +40,9 @@ export function Player() {
     if (!group) return;
     const delta = Math.min(rawDelta, 0.05);
     const { keys, joystick } = input;
-    const { isFading, nearbyId, setNearby } = useGameStore.getState();
+    const { isFading, panel, nearbyId, setNearby } = useGameStore.getState();
+    // Frozen while the screen fades or a content panel is open.
+    const isFrozen = isFading || panel !== null;
 
     if (player.teleported) {
       player.teleported = false;
@@ -56,8 +58,8 @@ export function Player() {
     let targetSpeed = 0;
     direction.set(0, 0, 0);
 
-    if (isFading) {
-      // Frozen while the screen is black and the location swaps.
+    if (isFrozen) {
+      clearMoveTarget();
     } else if (inputLength > 0.05) {
       clearMoveTarget();
       cancelPendingInteraction();
@@ -110,7 +112,7 @@ export function Player() {
     group.position.copy(player.position);
     group.rotation.y = player.heading;
 
-    if (isFading) return;
+    if (isFrozen) return;
 
     const nearby = findNearestInteractable(player.position.x, player.position.z);
     const nextNearbyId = nearby?.id ?? null;

@@ -2,7 +2,10 @@ import { create } from 'zustand';
 
 export type Quality = 'high' | 'low';
 
-export type Location = { kind: 'street' } | { kind: 'interior'; buildingId: string };
+export type Location =
+  | { kind: 'street' }
+  /** `floor` 0 is the ground floor; reading rooms paginate posts across floors. */
+  | { kind: 'interior'; buildingId: string; floor: number };
 
 /** HTML overlay for long-form content that doesn't fit on a 3D panel. */
 export type Panel = { kind: 'post'; slug: string } | { kind: 'contact'; topic?: string };

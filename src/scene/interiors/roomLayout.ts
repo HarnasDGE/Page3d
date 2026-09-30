@@ -29,9 +29,27 @@ export const WALLS = {
 /** Central exhibit (hologram pedestal, desk or tower). */
 export const EXHIBIT = { x: 0, z: ROOM_CENTER_Z, halfSize: 1.6 } as const;
 
-/** Blog terminals along the back wall. */
-export const TERMINAL_SLOTS = [-5.5, 0, 5.5].map((x) => ({ x, z: ROOM.minZ + 1.6 }));
+/** Blog terminals along the back wall, one per article on the floor. */
+export const TERMINAL_SLOTS = [-6, -2, 2, 6].map((x) => ({ x, z: ROOM.minZ + 1.6 }));
 export const TERMINAL_HALF_SIZE = { x: 0.9, z: 0.6 } as const;
+
+/**
+ * Reading room stairs along the side walls: up on the right (rising towards
+ * the back), the stairwell down on the left. `spot` is where the player
+ * stands to use them, and where they appear after changing floor.
+ */
+const STAIR_AREA = { inner: 6.3, outer: ROOM.halfWidth - 0.1, front: -4, back: -11 } as const;
+export const STAIRS = {
+  up: {
+    rect: { minX: STAIR_AREA.inner, maxX: STAIR_AREA.outer, minZ: STAIR_AREA.back, maxZ: STAIR_AREA.front },
+    spot: { x: (STAIR_AREA.inner + STAIR_AREA.outer) / 2, z: STAIR_AREA.front + 1.2 },
+  },
+  down: {
+    rect: { minX: -STAIR_AREA.outer, maxX: -STAIR_AREA.inner, minZ: STAIR_AREA.back, maxZ: STAIR_AREA.front },
+    spot: { x: -(STAIR_AREA.inner + STAIR_AREA.outer) / 2, z: STAIR_AREA.front + 1.2 },
+  },
+} as const;
+export type StairDirection = keyof typeof STAIRS;
 
 /** Contact console, off to the side so the tower stays the centrepiece. */
 export const CONSOLE = { x: -5, z: -4.5 } as const;
@@ -57,6 +75,10 @@ const OBSTACLES: Record<VenueKind, Rect[]> = {
   contact: [exhibitRect, rectAround(CONSOLE.x, CONSOLE.z, CONSOLE_HALF_SIZE.x, CONSOLE_HALF_SIZE.z)],
 };
 
-export function roomWorldFor(kind: VenueKind): CollisionWorld {
-  return { walkable: [floor], obstacles: OBSTACLES[kind] };
+/** Collision world for a room; reading rooms add the stairs present on that floor. */
+export function roomWorldFor(kind: VenueKind, stairs: { up?: boolean; down?: boolean } = {}): CollisionWorld {
+  const obstacles = [...OBSTACLES[kind]];
+  if (stairs.up) obstacles.push(STAIRS.up.rect);
+  if (stairs.down) obstacles.push(STAIRS.down.rect);
+  return { walkable: [floor], obstacles };
 }

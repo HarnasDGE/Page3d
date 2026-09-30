@@ -7,6 +7,8 @@ import {
   BUILDING_DEPTH,
   BUILDING_GAP,
   PLAZA_HALF_SIZE,
+  RING_INNER,
+  RING_OUTER,
   STREET_HALF_WIDTH,
   STREET_LENGTH,
   STREET_ROTATION,
@@ -135,6 +137,49 @@ function StreetGate({ street }: { street: Street }) {
   );
 }
 
+const RING_CENTER_Z = -(RING_INNER + RING_OUTER) / 2;
+const RING_DASH_COUNT = Math.floor((RING_OUTER * 2) / DASH_STEP);
+
+/** Centre dashes and neon edge lines along one side of the ring road. */
+function RingMarkings({ accent }: { accent: string }) {
+  const dashes = useRef<InstancedMesh>(null);
+
+  useLayoutEffect(() => {
+    const mesh = dashes.current;
+    if (!mesh) return;
+    const dummy = new Object3D();
+    for (let i = 0; i < RING_DASH_COUNT; i++) {
+      dummy.position.set(-RING_OUTER + 3 + i * DASH_STEP, 0.02, RING_CENTER_Z);
+      dummy.rotation.y = Math.PI / 2;
+      dummy.updateMatrix();
+      mesh.setMatrixAt(i, dummy.matrix);
+    }
+    mesh.instanceMatrix.needsUpdate = true;
+  }, []);
+
+  const innerLength = RING_INNER - STREET_HALF_WIDTH;
+  const glow = neon(accent, 1.6);
+  return (
+    <group>
+      <instancedMesh ref={dashes} args={[undefined, undefined, RING_DASH_COUNT]}>
+        <boxGeometry args={[0.18, 0.02, DASH_LENGTH]} />
+        <meshBasicMaterial color={neon('#ffffff', 0.35)} toneMapped={false} />
+      </instancedMesh>
+      <mesh position={[0, 0.02, -RING_OUTER + 0.05]}>
+        <boxGeometry args={[RING_OUTER * 2, 0.03, 0.1]} />
+        <meshBasicMaterial color={glow} toneMapped={false} />
+      </mesh>
+      {/* Inner edge, interrupted where the street joins the ring. */}
+      {[-1, 1].map((side) => (
+        <mesh key={side} position={[side * (STREET_HALF_WIDTH + innerLength / 2), 0.02, -RING_INNER - 0.05]}>
+          <boxGeometry args={[innerLength, 0.03, 0.1]} />
+          <meshBasicMaterial color={glow} toneMapped={false} />
+        </mesh>
+      ))}
+    </group>
+  );
+}
+
 export function StreetDecor() {
   return (
     <group>
@@ -143,6 +188,7 @@ export function StreetDecor() {
           <StreetMarkings accent={street.accent} />
           <StreetLamps accent={street.accent} streetId={street.id} />
           <StreetGate street={street} />
+          <RingMarkings accent={street.accent} />
         </group>
       ))}
     </group>

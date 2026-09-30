@@ -3,8 +3,9 @@ import { Object3D, type InstancedMesh } from 'three';
 import { createFacadeMaterial } from '@/scene/materials/facadeMaterial';
 
 const COUNT = 140;
-const MIN_RADIUS = 95;
-const MAX_RADIUS = 160;
+// Outside the ring road's outer buildings (corners reach ~94·√2 ≈ 133).
+const MIN_RADIUS = 145;
+const MAX_RADIUS = 210;
 
 /** Deterministic pseudo-random so the skyline is identical on every visit. */
 function random(seed: number) {

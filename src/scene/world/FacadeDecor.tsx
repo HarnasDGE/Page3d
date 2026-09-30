@@ -16,7 +16,11 @@ const SHUTTER_SIZE: [number, number] = [3.2, 2.8];
 
 /** Decorative street buildings: everything that is not a venue or a plaza tower. */
 const decoratedBuildings = buildings.filter(
-  (building) => building.street !== 'plaza' && !venueByBuilding.has(building.id),
+  (building, index) =>
+    building.street !== 'plaza' &&
+    !venueByBuilding.has(building.id) &&
+    // Ring road buildings are many; decorating every other one keeps draw calls in check.
+    (building.street !== 'ring' || index % 2 === 0),
 );
 
 function Poster({ map, x, flicker }: { map: Texture; x: number; flicker: boolean }) {

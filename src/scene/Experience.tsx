@@ -14,7 +14,7 @@ function Street() {
   return (
     <>
       <SkyDome />
-      <fog attach="fog" args={[HORIZON_COLOR, 25, 170]} />
+      <fog attach="fog" args={[HORIZON_COLOR, 25, 210]} />
 
       <hemisphereLight args={['#6a4bff', '#1a0c30', 1.6]} />
       <ambientLight intensity={0.15} />
@@ -36,7 +36,16 @@ export function Experience() {
       <PerformanceMonitor onFallback={() => setQuality('low')} onDecline={() => setQuality('low')} />
 
       <Suspense fallback={null}>
-        {location.kind === 'street' ? <Street /> : <Interior buildingId={location.buildingId} />}
+        {location.kind === 'street' ? (
+          <Street />
+        ) : (
+          // Keyed by floor so each floor mounts fresh (terminals, stairs, interactables).
+          <Interior
+            key={`${location.buildingId}:${location.floor}`}
+            buildingId={location.buildingId}
+            floor={location.floor}
+          />
+        )}
       </Suspense>
 
       <Player />

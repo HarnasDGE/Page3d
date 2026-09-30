@@ -14,6 +14,7 @@ export function LocationBar() {
         style={{ color: venue?.accent ?? 'var(--color-neon-cyan)' }}
       >
         {venue ? venue.sign : 'Neon District'}
+        {location.kind === 'interior' && location.floor > 0 && ` · PAGE ${location.floor + 1}`}
       </p>
       {venue && (
         <button

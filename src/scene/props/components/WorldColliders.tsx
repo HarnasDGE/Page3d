@@ -2,6 +2,8 @@ import { CuboidCollider, CylinderCollider, RigidBody } from '@react-three/rapier
 import {
   buildings,
   PLAZA_HALF_SIZE,
+  RING_INNER,
+  RING_OUTER,
   STREET_HALF_WIDTH,
   STREET_LENGTH,
   STREET_ROTATION,
@@ -15,10 +17,12 @@ const STREET_CENTER_Z = -PLAZA_HALF_SIZE - STREET_LENGTH / 2;
 /** Plaza edge segments between two street openings (local street space). */
 const PLAZA_EDGE_HALF = (PLAZA_HALF_SIZE - STREET_HALF_WIDTH) / 2;
 const PLAZA_EDGE_X = STREET_HALF_WIDTH + PLAZA_EDGE_HALF;
+/** Inner ring wall segments on either side of the street mouth. */
+const RING_INNER_HALF = (RING_INNER - STREET_HALF_WIDTH) / 2;
 
 /**
  * Static physics world mirroring the city: ground, buildings, invisible walls
- * that keep thrown items inside the streets and lamp posts.
+ * that keep thrown items inside the streets and the ring road, and lamp posts.
  */
 export function WorldColliders() {
   return (
@@ -48,11 +52,19 @@ export function WorldColliders() {
                 args={[PLAZA_EDGE_HALF, WALL_HALF_HEIGHT, WALL_HALF_THICKNESS]}
                 position={[side * PLAZA_EDGE_X, WALL_HALF_HEIGHT, -PLAZA_HALF_SIZE - WALL_HALF_THICKNESS]}
               />
+              <CuboidCollider
+                args={[RING_INNER_HALF, WALL_HALF_HEIGHT, WALL_HALF_THICKNESS]}
+                position={[side * (STREET_HALF_WIDTH + RING_INNER_HALF), WALL_HALF_HEIGHT, -RING_INNER + WALL_HALF_THICKNESS]}
+              />
               {LAMP_Z.map((z) => (
                 <CylinderCollider key={z} args={[3, 0.1]} position={[side * LAMP_X, 3, z]} />
               ))}
             </group>
           ))}
+          <CuboidCollider
+            args={[RING_OUTER, WALL_HALF_HEIGHT, WALL_HALF_THICKNESS]}
+            position={[0, WALL_HALF_HEIGHT, -RING_OUTER - WALL_HALF_THICKNESS]}
+          />
         </RigidBody>
       ))}
     </>

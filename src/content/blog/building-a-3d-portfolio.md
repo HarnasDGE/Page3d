@@ -2,7 +2,7 @@
 title: Building a 3D portfolio with React Three Fiber
 description: How this neon district was built — procedural buildings, a tiny collision system and keeping it smooth on phones.
 pubDate: 2026-09-20
-cover: neon-city
+category: creative
 tags: [threejs, react, creative-dev]
 ---
 

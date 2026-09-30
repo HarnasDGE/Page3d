@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { Text } from '@react-three/drei';
 import { formatDate } from '@/lib/format';
 import { FONTS } from '@/scene/fonts';
@@ -8,9 +9,13 @@ import { useContentStore } from '@/scene/store/contentStore';
 import { useGameStore } from '@/scene/store/gameStore';
 import { onTap } from '@/scene/world/events';
 import type { BlogPost } from '@/types/blog';
+import { POSTS_PER_PAGE, type BlogCategory } from '@/data/blogCategories';
+import { floorCount } from '@/scene/interaction/readingRoom';
+import { ChannelLetters } from '@/scene/world/signs/ChannelLetters';
 import { FramedImage } from '../components/FramedImage';
-import { HoloPanel, PanelText } from '../components/HoloPanel';
+import { PanelText } from '../components/HoloPanel';
 import { Pedestal } from '../components/Pedestal';
+import { Stairs } from '../components/Stairs';
 import { ROOM, TERMINAL_HALF_SIZE, TERMINAL_SLOTS, WALLS } from '../roomLayout';
 
 const SCREEN_WIDTH = 2.1;
@@ -87,9 +92,19 @@ function BookHologram({ accent }: { accent: string }) {
   );
 }
 
-export function ReadingRoom({ accent }: { accent: string }) {
-  const posts = useContentStore((state) => state.posts);
-  const tags = [...new Set(posts.flatMap((post) => post.tags))];
+interface ReadingRoomProps {
+  category: BlogCategory;
+  /** 0-based floor; each floor shows the next page of articles. */
+  floor: number;
+}
+
+/** A category's reading room: four articles per floor, stairs to the other pages. */
+export function ReadingRoom({ category, floor }: ReadingRoomProps) {
+  const { accent } = category;
+  const allPosts = useContentStore((state) => state.posts);
+  const posts = useMemo(() => allPosts.filter((post) => post.category === category.slug), [allPosts, category.slug]);
+  const pages = floorCount(posts.length);
+  const pagePosts = posts.slice(floor * POSTS_PER_PAGE, (floor + 1) * POSTS_PER_PAGE);
 
   return (
     <group>
@@ -97,47 +112,27 @@ export function ReadingRoom({ accent }: { accent: string }) {
         <BookHologram accent={accent} />
       </Pedestal>
 
+      {/* Category header on the back wall, extruded like the street signs. */}
+      <group position={[0, ROOM.height - 1.15, WALLS.back.z + 0.05]}>
+        <ChannelLetters text={category.sign} size={0.5} depth={0.1} accent={accent} />
+      </group>
       <Text
-        font={FONTS.display}
-        position={[0, ROOM.height - 1.2, WALLS.back.z + 0.02]}
-        fontSize={0.45}
-        letterSpacing={0.2}
+        font={FONTS.body}
+        position={[0, ROOM.height - 1.95, WALLS.back.z + 0.02]}
+        fontSize={0.3}
         anchorX="center"
         anchorY="middle"
       >
-        LATEST TRANSMISSIONS
-        <meshBasicMaterial color={neon(accent, 2.4)} toneMapped={false} />
+        {`${category.description}   Page ${floor + 1} of ${pages}`}
+        <meshBasicMaterial color={neon('#e6e3ff', 1.2)} toneMapped={false} />
       </Text>
 
-      {posts.slice(0, TERMINAL_SLOTS.length).map((post, i) => (
+      {pagePosts.map((post, i) => (
         <Terminal key={post.slug} post={post} x={TERMINAL_SLOTS[i].x} z={TERMINAL_SLOTS[i].z} accent={accent} />
       ))}
 
-      <HoloPanel
-        position={[WALLS.left.x, 3, WALLS.left.z]}
-        rotationY={WALLS.left.rotationY}
-        width={8}
-        height={3.2}
-        accent={accent}
-        title="TOPICS"
-      >
-        <PanelText size={0.36} maxWidth={7}>
-          {tags.map((tag) => `#${tag}`).join('   ')}
-        </PanelText>
-      </HoloPanel>
-
-      <HoloPanel
-        position={[WALLS.right.x, 3, WALLS.right.z]}
-        rotationY={WALLS.right.rotationY}
-        width={8}
-        height={3.2}
-        accent={accent}
-        title="THE BLOG"
-      >
-        <PanelText size={0.34} maxWidth={7}>
-          Notes on building fast websites, web performance and creative front-end work. Walk up to a terminal to read a post.
-        </PanelText>
-      </HoloPanel>
+      {floor < pages - 1 && <Stairs direction="up" targetPage={floor + 2} accent={accent} />}
+      {floor > 0 && <Stairs direction="down" targetPage={floor} accent={accent} />}
     </group>
   );
 }

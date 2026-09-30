@@ -1,4 +1,5 @@
 import { getCollection } from 'astro:content';
+import { categoryBySlug } from '@/data/blogCategories';
 import type { BlogPost } from '@/types/blog';
 
 const WORDS_PER_MINUTE = 220;
@@ -28,8 +29,9 @@ export async function getPosts(): Promise<BlogPost[]> {
       description: entry.data.description,
       date: entry.data.pubDate.toISOString(),
       tags: entry.data.tags,
+      category: entry.data.category,
       readingMinutes: Math.max(1, Math.round((entry.body ?? '').split(/\s+/).length / WORDS_PER_MINUTE)),
-      cover: coverUrl(entry.data.cover),
+      cover: coverUrl(entry.data.cover ?? categoryBySlug.get(entry.data.category)?.cover),
       html: entry.rendered?.html ?? '',
     }))
     .sort((a, b) => b.date.localeCompare(a.date));

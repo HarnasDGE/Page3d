@@ -2,7 +2,7 @@
 title: 'Core Web Vitals in 2026: a practical checklist'
 description: The fixes that move LCP, INP and CLS the most, in the order I apply them on client audits.
 pubDate: 2026-07-02
-cover: web-vitals
+category: performance
 tags: [performance, seo]
 ---
 

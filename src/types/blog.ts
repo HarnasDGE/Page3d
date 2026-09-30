@@ -6,6 +6,8 @@ export interface BlogPost {
   /** ISO date string. */
   date: string;
   tags: string[];
+  /** Category slug (reading room). */
+  category: string;
   readingMinutes: number;
   /** URL of the cover artwork, if the post has one. */
   cover?: string;

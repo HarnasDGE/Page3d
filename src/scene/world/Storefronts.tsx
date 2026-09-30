@@ -96,7 +96,10 @@ function DecorBladeSign({ building, word }: { building: Building; word: string }
 
 export function Storefronts() {
   const decorative = buildings.filter(
-    (building) => building.street !== 'plaza' && !venueByBuilding.has(building.id),
+    (building, index) =>
+      building.street !== 'plaza' &&
+      !venueByBuilding.has(building.id) &&
+      (building.street !== 'ring' || index % 2 === 1),
   );
 
   return (

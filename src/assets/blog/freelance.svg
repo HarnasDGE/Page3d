@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="450" viewBox="0 0 800 450">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1a0f3a"/><stop offset="1" stop-color="#07051a"/></linearGradient>
+    <filter id="glow"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <rect width="800" height="450" fill="url(#bg)"/>
+  <g filter="url(#glow)" fill="none" stroke="#8b5cff" stroke-width="6" stroke-linejoin="round">
+    <rect x="300" y="120" width="200" height="150" rx="14"/>
+    <path d="M360 120 V96 H440 V120"/>
+    <path d="M300 185 H500"/>
+  </g>
+  <circle cx="400" cy="185" r="12" fill="#ffb800" filter="url(#glow)"/>
+  <text x="400" y="380" text-anchor="middle" font-family="Arial Black, Arial, sans-serif" font-size="30" fill="#ffffff">FREELANCE NOTES</text>
+</svg>

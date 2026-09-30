@@ -3,7 +3,8 @@
  * derived from this data, so moving a building here moves its collider too.
  *
  * Streets are authored in "local" space (running north, towards -Z) and then
- * rotated in 90° steps into place around the central plaza.
+ * rotated in 90° steps into place around the central plaza. A square ring road
+ * joins the far ends of the four streets (a cross inside a square).
  */
 
 export type StreetId = 'services' | 'blog' | 'contact' | 'about';
@@ -22,7 +23,7 @@ export interface Point {
 
 export interface Building {
   id: string;
-  street: StreetId | 'plaza';
+  street: StreetId | 'plaza' | 'ring';
   x: number;
   z: number;
   width: number;
@@ -69,8 +70,16 @@ export const BUILDING_WIDTH = 12;
 export const BUILDING_DEPTH = 14;
 export const BUILDING_GAP = 2;
 export const BUILDINGS_PER_SIDE = 3;
-/** Streets overlap the plaza a bit so the walkable areas stay connected. */
+/** Streets overlap the plaza and ring a bit so the walkable areas stay connected. */
 const STREET_OVERLAP = 2;
+
+/** Ring road: its inner edge is where the streets end. */
+export const RING_INNER = PLAZA_HALF_SIZE + STREET_LENGTH;
+export const RING_WIDTH = 10;
+export const RING_OUTER = RING_INNER + RING_WIDTH;
+/** Depth of the building rows lining the ring. */
+const RING_ROW_DEPTH = 14;
+const RING_GAP = 2;
 
 export const ACCENTS = {
   cyan: '#00f0ff',
@@ -139,13 +148,11 @@ function rectToBuilding(
 function buildStreet(id: StreetId): { street: Street; buildings: Building[] } {
   const transform = DIRECTIONS[id];
   const { label, accent } = STREET_META[id];
-  const streetEnd = -(PLAZA_HALF_SIZE + STREET_LENGTH);
-
   const area = transformRect(
     {
       minX: -STREET_HALF_WIDTH,
       maxX: STREET_HALF_WIDTH,
-      minZ: streetEnd,
+      minZ: -RING_INNER - STREET_OVERLAP,
       maxZ: -PLAZA_HALF_SIZE + STREET_OVERLAP,
     },
     transform,
@@ -178,25 +185,74 @@ function buildStreet(id: StreetId): { street: Street; buildings: Building[] } {
     }
   }
 
-  // End cap closing the street.
-  const capWidth = STREET_HALF_WIDTH + BUILDING_WIDTH;
-  buildings.push(
-    rectToBuilding(
-      transformRect(
-        { minX: -capWidth, maxX: capWidth, minZ: streetEnd - 12, maxZ: streetEnd },
-        transform,
-      ),
-      {
-        id: `${id}-end`,
-        street: id,
-        height: 30,
-        accent,
-        ...place(transform, { x: 0, z: 1 }, { x: 0, z: streetEnd }),
-      },
-    ),
+  return { street: { id, label, accent, area }, buildings };
+}
+
+/** Splits [from, to] into `count` equal segments separated by `gap`. */
+function split(from: number, to: number, count: number, gap: number): [number, number][] {
+  const width = (to - from - gap * (count - 1)) / count;
+  return Array.from({ length: count }, (_, i) => {
+    const start = from + i * (width + gap);
+    return [start, start + width];
+  });
+}
+
+const ACCENT_CYCLE = [ACCENTS.cyan, ACCENTS.magenta, ACCENTS.violet, ACCENTS.amber];
+
+/**
+ * One side of the ring road (authored on the north side, then rotated) plus
+ * the buildings lining it. Row extents are asymmetric on purpose, so the four
+ * rotated copies tile the corners without overlapping.
+ */
+function buildRingSide(id: StreetId): { area: Rect; buildings: Building[] } {
+  const transform = DIRECTIONS[id];
+  const area = transformRect(
+    { minX: -RING_OUTER, maxX: RING_OUTER, minZ: -RING_OUTER, maxZ: -RING_INNER },
+    transform,
   );
 
-  return { street: { id, label, accent, area }, buildings };
+  const lots: { name: string; x: [number, number]; z: [number, number]; facing: 1 | -1 }[] = [
+    // Outer row, facing the ring (+Z), covering one corner.
+    ...split(-RING_OUTER - RING_ROW_DEPTH, RING_OUTER, 7, RING_GAP).map((x, i) => ({
+      name: `o${i}`,
+      x,
+      z: [-RING_OUTER - RING_ROW_DEPTH, -RING_OUTER] as [number, number],
+      facing: 1 as const,
+    })),
+    // Inner row, facing the ring (-Z), between the side streets' buildings.
+    ...[...split(-RING_INNER + RING_ROW_DEPTH, -(STREET_HALF_WIDTH + BUILDING_WIDTH), 2, RING_GAP),
+      ...split(STREET_HALF_WIDTH + BUILDING_WIDTH, RING_INNER, 2, RING_GAP)].map((x, i) => ({
+      name: `i${i}`,
+      x,
+      z: [-RING_INNER, -RING_INNER + RING_ROW_DEPTH] as [number, number],
+      facing: -1 as const,
+    })),
+    // Short fillers where the side streets' last buildings meet the ring.
+    ...[-1, 1].map((side, i) => ({
+      name: `f${i}`,
+      x: (side < 0
+        ? [-(STREET_HALF_WIDTH + BUILDING_WIDTH), -STREET_HALF_WIDTH]
+        : [STREET_HALF_WIDTH, STREET_HALF_WIDTH + BUILDING_WIDTH]) as [number, number],
+      z: [-RING_INNER, -RING_INNER + 7] as [number, number],
+      facing: -1 as const,
+    })),
+  ];
+
+  const buildings = lots.map((lot, i) => {
+    const doorZ = lot.facing > 0 ? lot.z[1] : lot.z[0];
+    return rectToBuilding(
+      transformRect({ minX: lot.x[0], maxX: lot.x[1], minZ: lot.z[0], maxZ: lot.z[1] }, transform),
+      {
+        id: `ring-${id}-${lot.name}`,
+        street: 'ring',
+        height: 16 + ((i * 11 + id.length * 3) % 15),
+        accent: ACCENT_CYCLE[(i + id.length) % ACCENT_CYCLE.length],
+        ...place(transform, { x: 0, z: lot.facing }, { x: (lot.x[0] + lot.x[1]) / 2, z: doorZ }),
+      },
+    );
+  });
+
+  return { area, buildings };
 }
 
 function buildPlazaCorners(): Building[] {
@@ -233,11 +289,16 @@ function buildPlazaCorners(): Building[] {
 
 const STREET_IDS: StreetId[] = ['services', 'blog', 'contact', 'about'];
 const generated = STREET_IDS.map(buildStreet);
+const ring = STREET_IDS.map(buildRingSide);
 
 export const streets: Street[] = generated.map((g) => g.street);
 
+/** The four sides of the ring road. */
+export const ringAreas: Rect[] = ring.map((side) => side.area);
+
 export const buildings: Building[] = [
   ...generated.flatMap((g) => g.buildings),
+  ...ring.flatMap((side) => side.buildings),
   ...buildPlazaCorners(),
 ];
 
@@ -249,12 +310,14 @@ export const plazaArea: Rect = {
 };
 
 /** Areas the player can walk on (union of rects). */
-export const walkableAreas: Rect[] = [plazaArea, ...streets.map((s) => s.area)];
+export const walkableAreas: Rect[] = [plazaArea, ...streets.map((s) => s.area), ...ringAreas];
 
 /** Interactive street furniture in the plaza corners, each facing the plaza centre. */
 export const VENDING_MACHINE = { x: 11.2, z: 11.2, rotationY: -Math.PI * 0.75 } as const;
-/** Basketball hoop on the west side of the plaza, facing the centre. */
-export const BASKETBALL_HOOPS = [{ id: 'plaza', x: -9.5, z: 0, rotationY: Math.PI / 2 }] as const;
+/** Basketball hoop near the north-west plaza corner, facing the centre. */
+export const BASKETBALL_HOOPS = [
+  { id: 'plaza', x: -10.5, z: -6.5, rotationY: Math.atan2(10.5, 6.5) },
+] as const;
 /** Kickable trash bins: plaza corner, Services Avenue and Blog Alley (by the lamps). */
 export const TRASH_BINS = [
   { id: 'bin-plaza', x: -11, z: 10.6 },

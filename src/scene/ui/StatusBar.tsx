@@ -20,6 +20,7 @@ function useBoostSecondsLeft() {
 export function StatusBar() {
   const isHolding = usePropsStore((state) => state.heldCanId !== null);
   const dropHeld = usePropsStore((state) => state.dropHeld);
+  const throwAuto = usePropsStore((state) => state.throwAuto);
   const hasOverlay = useGameStore((state) => state.panel !== null || state.isFading);
   const boostSeconds = useBoostSecondsLeft();
 
@@ -35,13 +36,21 @@ export function StatusBar() {
       {isHolding && (
         <div className="pointer-events-auto flex items-center gap-3 rounded-lg border border-neon-amber/60 bg-night/70 px-4 py-2 text-sm text-white/85 backdrop-blur-md">
           <span className="pointer-coarse:hidden">
-            Click to throw · <kbd className="font-display text-neon-amber">Q</kbd> drop
+            Click to throw · <kbd className="font-display text-neon-amber">F</kbd> shoot at hoop ·{' '}
+            <kbd className="font-display text-neon-amber">Q</kbd> drop
           </span>
-          <span className="hidden pointer-coarse:inline">Tap anywhere to throw</span>
+          {/* Touch: tap anywhere throws there; the button aims at the nearest hoop for you. */}
+          <button
+            type="button"
+            onClick={throwAuto}
+            className="hidden rounded border border-neon-amber bg-neon-amber/20 px-4 py-2 font-display text-xs tracking-widest text-neon-amber uppercase pointer-coarse:inline"
+          >
+            Throw
+          </button>
           <button
             type="button"
             onClick={dropHeld}
-            className="hidden rounded border border-white/30 px-3 py-1 font-display text-xs tracking-widest uppercase pointer-coarse:inline"
+            className="hidden rounded border border-white/30 px-4 py-2 font-display text-xs tracking-widest uppercase pointer-coarse:inline"
           >
             Drop
           </button>

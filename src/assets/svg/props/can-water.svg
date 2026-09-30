@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="256" viewBox="0 0 512 256">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#dfe9f3"/>
+      <stop offset="1" stop-color="#9fb8d0"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="256" fill="url(#bg)"/>
+  <g fill="none" stroke="#1d4e89" stroke-width="3" opacity="0.5">
+    <circle cx="60" cy="70" r="8"/><circle cx="84" cy="100" r="5"/><circle cx="40" cy="120" r="6"/>
+    <circle cx="316" cy="70" r="8"/><circle cx="340" cy="100" r="5"/><circle cx="296" cy="120" r="6"/>
+  </g>
+  <g font-family="Arial Black, Arial, sans-serif" fill="#1d4e89" text-anchor="middle">
+    <text x="170" y="120" font-size="44">ARCTIC</text>
+    <text x="426" y="120" font-size="44">ARCTIC</text>
+  </g>
+  <g font-family="Arial, sans-serif" fill="#1d4e89" text-anchor="middle" font-size="18" letter-spacing="5">
+    <text x="170" y="150">SPARKLING WATER</text><text x="426" y="150">SPARKLING WATER</text>
+  </g>
+  <path d="M0 196 H512" stroke="#1d4e89" stroke-width="6"/>
+  <text x="256" y="232" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#1d4e89">330 ml · NATURAL</text>
+</svg>

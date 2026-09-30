@@ -1,5 +1,5 @@
 import {
-  BASKETBALL_HOOP,
+  BASKETBALL_HOOPS,
   buildings,
   facadePoint,
   facingRotation,
@@ -41,18 +41,41 @@ export const ELECTRICAL_BOX = {
 /** Unit vector a plaza prop faces (towards the plaza centre). */
 const facing = (rotationY: number) => ({ x: Math.sin(rotationY), z: Math.cos(rotationY) });
 
-const hoopFacing = facing(BASKETBALL_HOOP.rotationY);
 /** Horizontal distance from the pole to the backboard and to the rim centre. */
 export const HOOP_BOARD_OFFSET = 0.35;
 export const HOOP_RIM_OFFSET = 0.85;
 export const HOOP_RIM_RADIUS = 0.45;
-export const HOOP_RIM = {
-  x: BASKETBALL_HOOP.x + hoopFacing.x * HOOP_RIM_OFFSET,
-  y: 3.05,
-  z: BASKETBALL_HOOP.z + hoopFacing.z * HOOP_RIM_OFFSET,
-} as const;
-/** Throws aimed within this radius of the rim are steered into it. */
+export const HOOP_RIM_HEIGHT = 3.05;
+
+/** Every hoop with its rim centre in world space. */
+export const HOOPS = BASKETBALL_HOOPS.map((hoop) => {
+  const direction = facing(hoop.rotationY);
+  return {
+    ...hoop,
+    rim: {
+      x: hoop.x + direction.x * HOOP_RIM_OFFSET,
+      y: HOOP_RIM_HEIGHT,
+      z: hoop.z + direction.z * HOOP_RIM_OFFSET,
+    },
+  };
+});
+
+export type Hoop = (typeof HOOPS)[number];
+
+/** Closest hoop to a point on the ground, with its horizontal distance to the rim. */
+export function nearestHoop(x: number, z: number) {
+  let best: { hoop: Hoop; distance: number } | null = null;
+  for (const hoop of HOOPS) {
+    const distance = Math.hypot(x - hoop.rim.x, z - hoop.rim.z);
+    if (!best || distance < best.distance) best = { hoop, distance };
+  }
+  return best!;
+}
+
+/** Throws aimed within this radius of a rim are steered into it. */
 export const HOOP_ASSIST_RADIUS = 1.6;
+/** The Throw button / F key aims at a hoop this close to the android. */
+export const HOOP_AUTO_AIM_RANGE = 14;
 
 const vendingFacing = facing(VENDING_MACHINE.rotationY);
 export const VENDING = {

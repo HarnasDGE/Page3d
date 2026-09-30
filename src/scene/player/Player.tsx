@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { Suspense, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { MathUtils, Vector3, type Group } from 'three';
 import { clearMoveTarget, input } from '@/scene/controls/input';
@@ -138,7 +138,10 @@ export function Player() {
       <Android isCarrying={heldCan !== undefined} />
       {heldCan && (
         <group position={HAND_OFFSET.toArray()}>
-          <CanModel variant={heldCan.variant} />
+          {/* Local boundary: the label texture may still be loading. */}
+          <Suspense fallback={null}>
+            <CanModel variant={heldCan.variant} />
+          </Suspense>
         </group>
       )}
       <pointLight position={[0, 2.2, 0.6]} color={ACCENTS.cyan} intensity={6} distance={7} />

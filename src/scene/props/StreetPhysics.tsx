@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { Physics } from '@react-three/rapier';
-import { BasketballHoop } from './components/BasketballHoop';
+import { BasketballHoops } from './components/BasketballHoop';
 import { canPositions, Cans } from './components/Cans';
 import { ElectricalBox } from './components/ElectricalBox';
 import { PlayerBody } from './components/PlayerBody';
@@ -32,7 +32,7 @@ export default function StreetPhysics() {
       <TrashBin />
       <ElectricalBox />
       <VendingMachine />
-      <BasketballHoop />
+      <BasketballHoops />
       <TrajectoryPreview />
     </Physics>
   );

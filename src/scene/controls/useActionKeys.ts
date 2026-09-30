@@ -6,8 +6,9 @@ import { useGameStore } from '@/scene/store/gameStore';
 import { isTypingTarget } from './useKeyboardControls';
 
 /**
- * E / Enter uses the nearby interactable, Q drops a held item,
- * Escape closes a minigame or panel, or leaves the building.
+ * E / Enter uses the nearby interactable, F throws a held can (at a nearby
+ * hoop, else ahead), Q drops it, Escape closes a minigame or panel, or leaves
+ * the building.
  */
 export function useActionKeys() {
   useEffect(() => {
@@ -28,6 +29,8 @@ export function useActionKeys() {
 
       if (event.code === 'KeyQ') {
         usePropsStore.getState().dropHeld();
+      } else if (event.code === 'KeyF') {
+        usePropsStore.getState().throwAuto();
       } else if (event.code === 'KeyE' || event.code === 'Enter') {
         const item = getInteractable(nearbyId);
         if (!item) return;

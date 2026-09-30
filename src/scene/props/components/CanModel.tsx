@@ -1,32 +1,75 @@
-import { neon } from '@/scene/materials/neon';
+import { useMemo } from 'react';
+import { useTexture } from '@react-three/drei';
+import { MeshStandardMaterial } from 'three';
+import { CAN_LABELS } from '@/scene/textures/assets';
 
 export const CAN_RADIUS = 0.15;
 export const CAN_HALF_HEIGHT = 0.2;
 
-const VARIANTS = [
-  { body: '#d81b9c', band: '#00f0ff' },
-  { body: '#0f7c8c', band: '#ffb800' },
-  { body: '#3a2a8c', band: '#ff2bd6' },
-] as const;
+// Profile of a standard 330 ml can (bottom → top), scaled to the collider.
+const BOTTOM_Y = -CAN_HALF_HEIGHT;
+const BODY_START = BOTTOM_Y + 0.025;
+const BODY_END = CAN_HALF_HEIGHT - 0.05;
+const LID_Y = CAN_HALF_HEIGHT - 0.015;
+const NECK_RADIUS = CAN_RADIUS * 0.8;
+const BODY_HEIGHT = BODY_END - BODY_START;
 
-/** Soda can: coloured body, glowing label band and a metal top. */
+/** Brushed aluminium for lid and base; a touch of emission keeps it readable at night. */
+function useAluminium() {
+  return useMemo(
+    () =>
+      new MeshStandardMaterial({
+        color: '#cfd4de',
+        metalness: 0.45,
+        roughness: 0.3,
+        emissive: '#3a3f4a',
+        emissiveIntensity: 0.4,
+      }),
+    [],
+  );
+}
+
+/** Realistic soda can: printed label, tapered neck, lid with a pull tab. */
 export function CanModel({ variant }: { variant: number }) {
-  const colors = VARIANTS[variant % VARIANTS.length];
-  const height = CAN_HALF_HEIGHT * 2;
+  const labels = useTexture([...CAN_LABELS]);
+  const aluminium = useAluminium();
+  const label = labels[variant % labels.length];
+  const body = useMemo(
+    () =>
+      new MeshStandardMaterial({
+        map: label,
+        metalness: 0.25,
+        roughness: 0.35,
+        // Slight self-light so the print stays visible in the dark street.
+        emissiveMap: label,
+        emissive: '#ffffff',
+        emissiveIntensity: 0.18,
+      }),
+    [label],
+  );
 
   return (
     <group>
-      <mesh>
-        <cylinderGeometry args={[CAN_RADIUS, CAN_RADIUS, height, 16]} />
-        <meshStandardMaterial color={colors.body} metalness={0.7} roughness={0.3} />
+      {/* Base: tapers in towards the bottom dome. */}
+      <mesh position-y={(BOTTOM_Y + BODY_START) / 2} material={aluminium}>
+        <cylinderGeometry args={[CAN_RADIUS, CAN_RADIUS * 0.85, BODY_START - BOTTOM_Y, 24]} />
       </mesh>
-      <mesh>
-        <cylinderGeometry args={[CAN_RADIUS + 0.004, CAN_RADIUS + 0.004, 0.06, 16, 1, true]} />
-        <meshBasicMaterial color={neon(colors.band, 1.8)} toneMapped={false} />
+      <mesh position-y={BODY_START + BODY_HEIGHT / 2} material={body}>
+        <cylinderGeometry args={[CAN_RADIUS, CAN_RADIUS, BODY_HEIGHT, 32, 1, true]} />
       </mesh>
-      <mesh position-y={CAN_HALF_HEIGHT + 0.005}>
-        <cylinderGeometry args={[CAN_RADIUS * 0.92, CAN_RADIUS, 0.01, 16]} />
-        <meshStandardMaterial color="#c9ccd8" metalness={0.9} roughness={0.25} />
+      {/* Shoulder narrowing to the neck. */}
+      <mesh position-y={(BODY_END + LID_Y) / 2} material={aluminium}>
+        <cylinderGeometry args={[NECK_RADIUS, CAN_RADIUS, LID_Y - BODY_END, 24, 1, true]} />
+      </mesh>
+      <mesh position-y={LID_Y + 0.0075} material={aluminium}>
+        <cylinderGeometry args={[NECK_RADIUS, NECK_RADIUS, 0.015, 24]} />
+      </mesh>
+      <mesh position-y={CAN_HALF_HEIGHT} rotation-x={Math.PI / 2} material={aluminium}>
+        <torusGeometry args={[NECK_RADIUS, 0.006, 6, 24]} />
+      </mesh>
+      {/* Pull tab */}
+      <mesh position={[0, CAN_HALF_HEIGHT + 0.002, 0.03]} material={aluminium}>
+        <boxGeometry args={[0.035, 0.004, 0.06]} />
       </mesh>
     </group>
   );

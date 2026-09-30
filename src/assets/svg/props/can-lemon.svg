@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="256" viewBox="0 0 512 256">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2f9e44"/>
+      <stop offset="1" stop-color="#1b6e2d"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="256" fill="url(#bg)"/>
+  <g>
+    <circle cx="96" cy="120" r="46" fill="#f4e04d"/>
+    <circle cx="96" cy="120" r="38" fill="#fff7b0"/>
+    <g stroke="#f4e04d" stroke-width="4"><path d="M96 82 V158 M58 120 H134 M69 93 L123 147 M123 93 L69 147"/></g>
+    <circle cx="352" cy="120" r="46" fill="#f4e04d"/>
+    <circle cx="352" cy="120" r="38" fill="#fff7b0"/>
+    <g stroke="#f4e04d" stroke-width="4"><path d="M352 82 V158 M314 120 H390 M325 93 L379 147 M379 93 L325 147"/></g>
+  </g>
+  <g font-family="Arial Black, Arial, sans-serif" fill="#ffffff" text-anchor="middle">
+    <text x="224" y="112" font-size="34">LEMON</text>
+    <text x="224" y="148" font-size="24" fill="#f4e04d">SODA</text>
+    <text x="480" y="112" font-size="34">LEMON</text>
+  </g>
+  <rect y="212" width="512" height="14" fill="#f4e04d"/>
+  <text x="256" y="246" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#d8f5dd">330 ml · SPARKLING</text>
+</svg>

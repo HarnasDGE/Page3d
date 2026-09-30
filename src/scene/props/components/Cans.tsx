@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef } from 'react';
-import { useFrame, type ThreeEvent } from '@react-three/fiber';
+import { useFrame } from '@react-three/fiber';
 import { CylinderCollider, RigidBody, type RapierRigidBody } from '@react-three/rapier';
 import { registerInteractable, requestInteraction } from '@/scene/interaction/interactables';
 import { useGameStore } from '@/scene/store/gameStore';
@@ -15,13 +15,9 @@ const isPickupEnabled = () => {
   return heldCanId === null && minigame === null;
 };
 
-/** Tapping a can: throw the held one at it, otherwise walk over and pick it up. */
+/** Tapping a can walks over and picks it up (onTap throws instead while holding one). */
 const handleCanTap = (id: string) =>
-  onTap((event: ThreeEvent<MouseEvent>) => {
-    const { heldCanId, throwHeld } = usePropsStore.getState();
-    if (heldCanId) throwHeld(event.point);
-    else requestInteraction(`can:${id}`, useGameStore.getState().nearbyId);
-  });
+  onTap(() => requestInteraction(`can:${id}`, useGameStore.getState().nearbyId));
 
 function Can({ can }: { can: CanState }) {
   const body = useRef<RapierRigidBody>(null);

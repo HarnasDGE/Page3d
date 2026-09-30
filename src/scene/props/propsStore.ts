@@ -4,7 +4,7 @@ import { player } from '@/scene/player/playerState';
 import { useGameStore } from '@/scene/store/gameStore';
 import { useToastStore } from '@/scene/store/toastStore';
 import { computeThrow, getForward, getHandPosition } from './carry';
-import { INITIAL_CANS, MAX_CANS } from './propLayout';
+import { HOOP_AUTO_AIM_RANGE, INITIAL_CANS, MAX_CANS, nearestHoop } from './propLayout';
 
 type Vec3 = [number, number, number];
 
@@ -27,6 +27,8 @@ interface PropsState {
   saveCan: (id: string, position: Vec3) => void;
   pickUp: (id: string) => void;
   throwHeld: (target: Vector3) => void;
+  /** Throw without aiming (touch button / F key): at a nearby hoop, else straight ahead. */
+  throwAuto: () => void;
   dropHeld: () => void;
 
   binGeneration: number;
@@ -58,6 +60,9 @@ const hand = new Vector3();
 const target = new Vector3();
 const velocity = new Vector3();
 const forward = new Vector3();
+const autoTarget = new Vector3();
+/** Distance of a plain forward throw. */
+const FORWARD_THROW_DISTANCE = 7;
 
 let nextCanId = INITIAL_CANS.length;
 
@@ -114,6 +119,19 @@ export const usePropsStore = create<PropsState>((set, get) => ({
       ),
     });
     useToastStore.getState().unlock('first-throw');
+  },
+
+  throwAuto: () => {
+    if (!get().heldCanId) return;
+    const { x, z } = player.position;
+    const { hoop, distance } = nearestHoop(x, z);
+    if (distance < HOOP_AUTO_AIM_RANGE) {
+      autoTarget.set(hoop.rim.x, 0, hoop.rim.z);
+    } else {
+      getForward(forward);
+      autoTarget.set(x + forward.x * FORWARD_THROW_DISTANCE, 0, z + forward.z * FORWARD_THROW_DISTANCE);
+    }
+    get().throwHeld(autoTarget);
   },
 
   dropHeld: () => {

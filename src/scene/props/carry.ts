@@ -1,6 +1,6 @@
 import { Vector3 } from 'three';
 import { player } from '@/scene/player/playerState';
-import { HOOP_ASSIST_RADIUS, HOOP_RIM } from './propLayout';
+import { HOOP_ASSIST_RADIUS, nearestHoop } from './propLayout';
 
 export const GRAVITY = 9.81;
 /** Max horizontal throw distance. */
@@ -70,13 +70,14 @@ export function pointOnArc(from: Vector3, velocity: Vector3, t: number, out: Vec
 
 /**
  * Resolves a throw at `point`: fills the landing/aim target and launch
- * velocity, returns the flight time. Throws near the hoop are steered into the
+ * velocity, returns the flight time. Throws near a hoop are steered into its
  * rim with a higher, dropping arc.
  */
 export function computeThrow(from: Vector3, point: Vector3, outTarget: Vector3, outVelocity: Vector3) {
-  const nearHoop = Math.hypot(point.x - HOOP_RIM.x, point.z - HOOP_RIM.z) < HOOP_ASSIST_RADIUS;
-  if (nearHoop) {
-    outTarget.set(HOOP_RIM.x, HOOP_RIM.y + 0.1, HOOP_RIM.z);
+  const { hoop, distance: toRim } = nearestHoop(point.x, point.z);
+  if (toRim < HOOP_ASSIST_RADIUS) {
+    const { rim } = hoop;
+    outTarget.set(rim.x, rim.y + 0.1, rim.z);
     const distance = Math.hypot(outTarget.x - from.x, outTarget.z - from.z);
     const rise = outTarget.y - from.y;
     // Lob: pick the flight time so the can drops in steeply (vertical speed at

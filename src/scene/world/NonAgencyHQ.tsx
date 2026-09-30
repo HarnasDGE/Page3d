@@ -2,17 +2,24 @@ import { Text } from '@react-three/drei';
 import { FONTS } from '@/scene/fonts';
 import { neon } from '@/scene/materials/neon';
 import { BrandLogo } from './BrandLogo';
-import { ACCENTS, BRAND_BILLBOARD, buildings } from './cityLayout';
-import { blockTap } from './events';
+import { ACCENTS, buildings, PLAYER_SPAWN } from './cityLayout';
 
-/** The plaza tower that carries the NON.agency branding (north-east corner). */
-const HQ_ID = 'plaza-1';
-const hq = buildings.find((building) => building.id === HQ_ID)!;
+/**
+ * The NON.agency billboard stands on the roof of the lowest building at the
+ * plaza edge (first building on Services Avenue), facing the plaza.
+ */
+const HOST_ID = 'services-l0';
+const host = buildings.find((building) => building.id === HOST_ID)!;
 
-const BILLBOARD = { width: 7.4, height: 4, bottom: 3.6 } as const;
-const ROOF_SIGN = { width: 15, height: 4.5, lift: 3.5 } as const;
-/** Turns the rooftop sign a little towards the spawn point. */
-const ROOF_SIGN_TURN = -0.35;
+const BOARD = { width: 9, height: 4.8, depth: 0.3 } as const;
+/** Height of the steel legs between the roof and the board. */
+const LEG_HEIGHT = 0.8;
+/** Board stands on the roof edge facing the plaza, so the roof never hides it. */
+const POSITION = { x: host.x, z: host.z + host.depth / 2 - 1.5 } as const;
+/** Turned towards the spawn point so it is readable when the visit starts. */
+const ROTATION_Y = Math.atan2(PLAYER_SPAWN.x - POSITION.x, PLAYER_SPAWN.z - POSITION.z);
+
+const STEEL = { color: '#1c1830', metalness: 0.8, roughness: 0.4 } as const;
 
 function Frame({ width, height, color }: { width: number; height: number; color: string }) {
   const edge = 0.12;
@@ -35,38 +42,43 @@ function Frame({ width, height, color }: { width: number; height: number; color:
   );
 }
 
-/** Freestanding pylon billboard in the plaza corner, readable from the spawn point. */
-function Billboard() {
-  const centerY = BILLBOARD.bottom + BILLBOARD.height / 2;
+/** Rooftop billboard on a steel frame, branded on both faces. */
+function RooftopBillboard() {
+  const centerY = LEG_HEIGHT + BOARD.height / 2;
+  const legX = BOARD.width / 2 - 0.8;
+
   return (
-    <group
-      position={[BRAND_BILLBOARD.x, 0, BRAND_BILLBOARD.z]}
-      rotation-y={BRAND_BILLBOARD.rotationY}
-      onClick={blockTap}
-    >
-      {[-1, 1].map((side) => (
-        <mesh key={side} position={[side * BRAND_BILLBOARD.legOffset, BILLBOARD.bottom / 2, 0]}>
-          <boxGeometry args={[0.35, BILLBOARD.bottom, 0.35]} />
-          <meshStandardMaterial color="#1c1830" metalness={0.8} roughness={0.4} />
-        </mesh>
+    <group position={[POSITION.x, host.height, POSITION.z]} rotation-y={ROTATION_Y}>
+      {/* Legs with diagonal braces back to the roof. */}
+      {[-legX, legX].map((x) => (
+        <group key={x}>
+          <mesh position={[x, centerY / 2, 0]}>
+            <boxGeometry args={[0.25, centerY, 0.25]} />
+            <meshStandardMaterial {...STEEL} />
+          </mesh>
+          <mesh position={[x, LEG_HEIGHT / 2 + 0.6, -0.9]} rotation-x={-0.7}>
+            <boxGeometry args={[0.15, 2.8, 0.15]} />
+            <meshStandardMaterial {...STEEL} />
+          </mesh>
+        </group>
       ))}
+
       <group position-y={centerY}>
         <mesh>
-          <boxGeometry args={[BILLBOARD.width, BILLBOARD.height, 0.3]} />
+          <boxGeometry args={[BOARD.width, BOARD.height, BOARD.depth]} />
           <meshStandardMaterial color="#07060f" metalness={0.6} roughness={0.4} />
         </mesh>
-        {/* Both faces carry the brand. */}
         {[0, Math.PI].map((rotation) => (
           <group key={rotation} rotation-y={rotation}>
-            <group position-z={0.2}>
-              <Frame width={BILLBOARD.width} height={BILLBOARD.height} color={ACCENTS.magenta} />
-              <group position-y={0.35}>
-                <BrandLogo width={BILLBOARD.width * 0.72} color="#ffffff" />
+            <group position-z={BOARD.depth / 2 + 0.05}>
+              <Frame width={BOARD.width} height={BOARD.height} color={ACCENTS.magenta} />
+              <group position-y={0.45}>
+                <BrandLogo width={BOARD.width * 0.72} color="#ffffff" />
               </group>
               <Text
                 font={FONTS.display}
-                position-y={-1.3}
-                fontSize={0.3}
+                position-y={-1.55}
+                fontSize={0.36}
                 letterSpacing={0.3}
                 anchorX="center"
                 anchorY="middle"
@@ -78,40 +90,11 @@ function Billboard() {
           </group>
         ))}
       </group>
-      <pointLight position={[0, centerY, 3]} color={ACCENTS.magenta} intensity={30} distance={12} />
-    </group>
-  );
-}
-
-/** Classic rooftop sign on a steel frame. */
-function RoofSign() {
-  const top = hq.height;
-  const legHeight = ROOF_SIGN.lift;
-
-  return (
-    <group position={[hq.x, top, hq.z + hq.depth / 2 - 3]} rotation-y={ROOF_SIGN_TURN}>
-      {[-1, 1].map((side) => (
-        <mesh key={side} position={[(side * ROOF_SIGN.width) / 2.6, legHeight / 2, 0]}>
-          <boxGeometry args={[0.25, legHeight, 0.25]} />
-          <meshStandardMaterial color="#1c1830" metalness={0.8} roughness={0.4} />
-        </mesh>
-      ))}
-      <mesh position-y={legHeight}>
-        <boxGeometry args={[ROOF_SIGN.width * 0.85, 0.2, 0.2]} />
-        <meshStandardMaterial color="#1c1830" metalness={0.8} roughness={0.4} />
-      </mesh>
-      <group position-y={legHeight + ROOF_SIGN.height / 2}>
-        <BrandLogo width={ROOF_SIGN.width} color={ACCENTS.cyan} glow={3} />
-      </group>
+      <pointLight position={[0, centerY, 4]} color={ACCENTS.magenta} intensity={40} distance={14} />
     </group>
   );
 }
 
 export function NonAgencyHQ() {
-  return (
-    <group>
-      <Billboard />
-      <RoofSign />
-    </group>
-  );
+  return <RooftopBillboard />;
 }

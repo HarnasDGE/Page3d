@@ -6,7 +6,8 @@ import { usePropsStore } from '@/scene/props/propsStore';
 import { resolveCollisions } from '@/scene/world/collision';
 import { cameraOrbit, player } from './playerState';
 
-const MIN_PITCH = 0.02;
+/** Slightly negative: the camera can look up at rooftops (signs, skyline). */
+const MIN_PITCH = -0.12;
 const MAX_PITCH = 1.15;
 const YAW_SENSITIVITY = 0.006;
 const PITCH_SENSITIVITY = 0.004;

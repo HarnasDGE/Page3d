@@ -1,6 +1,5 @@
 import { CuboidCollider, CylinderCollider, RigidBody } from '@react-three/rapier';
 import {
-  BRAND_BILLBOARD,
   buildings,
   PLAZA_HALF_SIZE,
   STREET_HALF_WIDTH,
@@ -19,7 +18,7 @@ const PLAZA_EDGE_X = STREET_HALF_WIDTH + PLAZA_EDGE_HALF;
 
 /**
  * Static physics world mirroring the city: ground, buildings, invisible walls
- * that keep thrown items inside the streets, lamp posts and the billboard.
+ * that keep thrown items inside the streets and lamp posts.
  */
 export function WorldColliders() {
   return (
@@ -56,18 +55,6 @@ export function WorldColliders() {
           ))}
         </RigidBody>
       ))}
-
-      <RigidBody
-        type="fixed"
-        colliders={false}
-        position={[BRAND_BILLBOARD.x, 0, BRAND_BILLBOARD.z]}
-        rotation={[0, BRAND_BILLBOARD.rotationY, 0]}
-      >
-        <CuboidCollider args={[3.7, 2, 0.15]} position={[0, 5.6, 0]} />
-        {[-1, 1].map((side) => (
-          <CylinderCollider key={side} args={[1.8, 0.18]} position={[side * BRAND_BILLBOARD.legOffset, 1.8, 0]} />
-        ))}
-      </RigidBody>
     </>
   );
 }

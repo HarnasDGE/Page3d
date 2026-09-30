@@ -251,21 +251,6 @@ export const plazaArea: Rect = {
 /** Areas the player can walk on (union of rects). */
 export const walkableAreas: Rect[] = [plazaArea, ...streets.map((s) => s.area)];
 
-/** Freestanding NON.agency billboard in the north-east plaza corner, facing the spawn. */
-export const BRAND_BILLBOARD = {
-  x: 10.4,
-  z: -10.4,
-  rotationY: -0.62,
-  /** Distance of each leg from the centre, along the board. */
-  legOffset: 2.6,
-} as const;
-
-const billboardLegs: Rect[] = [-1, 1].map((side) => {
-  const x = BRAND_BILLBOARD.x + Math.cos(BRAND_BILLBOARD.rotationY) * side * BRAND_BILLBOARD.legOffset;
-  const z = BRAND_BILLBOARD.z - Math.sin(BRAND_BILLBOARD.rotationY) * side * BRAND_BILLBOARD.legOffset;
-  return { minX: x - 0.35, maxX: x + 0.35, minZ: z - 0.35, maxZ: z + 0.35 };
-});
-
 /** Interactive street furniture in the plaza corners, each facing the plaza centre. */
 export const VENDING_MACHINE = { x: 11.2, z: 11.2, rotationY: -Math.PI * 0.75 } as const;
 /** Basketball hoop on the west side of the plaza, facing the centre. */
@@ -288,7 +273,6 @@ const square = (x: number, z: number, half: number): Rect => ({
 export const obstacles: Rect[] = [
   // Central hologram pedestal.
   { minX: -2, maxX: 2, minZ: -2, maxZ: 2 },
-  ...billboardLegs,
   square(VENDING_MACHINE.x, VENDING_MACHINE.z, 0.9),
   ...BASKETBALL_HOOPS.map((hoop) => square(hoop.x, hoop.z, 0.3)),
 ];

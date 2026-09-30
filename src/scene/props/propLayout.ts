@@ -74,8 +74,7 @@ export function nearestHoop(x: number, z: number) {
 
 /** Throws aimed within this radius of a rim are steered into it. */
 export const HOOP_ASSIST_RADIUS = 1.6;
-/** The Throw button / F key aims at a hoop this close to the android. */
-export const HOOP_AUTO_AIM_RANGE = 14;
+
 
 const vendingFacing = facing(VENDING_MACHINE.rotationY);
 export const VENDING = {

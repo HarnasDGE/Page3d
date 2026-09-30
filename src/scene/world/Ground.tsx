@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
 import { MeshReflectorMaterial } from '@react-three/drei';
-import { aimAtFloor, stopAiming, tapToMove } from '@/scene/controls/tapToMove';
+import { tapToMove } from '@/scene/controls/tapToMove';
 import { neon } from '@/scene/materials/neon';
 import { useGameStore } from '@/scene/store/gameStore';
 import { ROAD_TEXTURES } from '@/scene/textures/assets';
@@ -63,12 +63,7 @@ function AsphaltMaterial() {
 export function Ground() {
   return (
     <group>
-      <mesh
-        rotation-x={-Math.PI / 2}
-        onClick={tapToMove}
-        onPointerMove={aimAtFloor}
-        onPointerOut={stopAiming}
-      >
+      <mesh rotation-x={-Math.PI / 2} onClick={tapToMove}>
         <planeGeometry args={[GROUND_SIZE, GROUND_SIZE]} />
         <Suspense fallback={<meshStandardMaterial color={GROUND_COLOR} roughness={0.35} metalness={0.7} />}>
           <AsphaltMaterial />

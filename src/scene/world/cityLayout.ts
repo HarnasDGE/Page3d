@@ -268,13 +268,14 @@ const billboardLegs: Rect[] = [-1, 1].map((side) => {
 
 /** Interactive street furniture in the plaza corners, each facing the plaza centre. */
 export const VENDING_MACHINE = { x: 11.2, z: 11.2, rotationY: -Math.PI * 0.75 } as const;
-/** Hoops: one in the north-west corner plus a pair facing each other across the plaza. */
-export const BASKETBALL_HOOPS = [
-  { id: 'corner', x: -11.4, z: -11.4, rotationY: Math.PI * 0.25 },
-  { id: 'court-west', x: -9.5, z: 0, rotationY: Math.PI / 2 },
-  { id: 'court-east', x: 9.5, z: 0, rotationY: -Math.PI / 2 },
+/** Basketball hoop on the west side of the plaza, facing the centre. */
+export const BASKETBALL_HOOPS = [{ id: 'plaza', x: -9.5, z: 0, rotationY: Math.PI / 2 }] as const;
+/** Kickable trash bins: plaza corner, Services Avenue and Blog Alley (by the lamps). */
+export const TRASH_BINS = [
+  { id: 'bin-plaza', x: -11, z: 10.6 },
+  { id: 'bin-services', x: 4.2, z: -31.5 },
+  { id: 'bin-blog', x: 31.5, z: 4.2 },
 ] as const;
-export const TRASH_BIN = { x: -11, z: 10.6 } as const;
 
 const square = (x: number, z: number, half: number): Rect => ({
   minX: x - half,

@@ -3,8 +3,9 @@ import { create } from 'zustand';
 import { player } from '@/scene/player/playerState';
 import { useGameStore } from '@/scene/store/gameStore';
 import { useToastStore } from '@/scene/store/toastStore';
-import { computeThrow, getForward, getHandPosition } from './carry';
-import { HOOP_AUTO_AIM_RANGE, INITIAL_CANS, MAX_CANS, nearestHoop } from './propLayout';
+import { TRASH_BINS } from '@/scene/world/cityLayout';
+import { chargedThrowPoint, chargePower, computeThrow, getForward, getHandPosition } from './carry';
+import { INITIAL_CANS, MAX_CANS } from './propLayout';
 
 type Vec3 = [number, number, number];
 
@@ -27,14 +28,17 @@ interface PropsState {
   saveCan: (id: string, position: Vec3) => void;
   pickUp: (id: string) => void;
   throwHeld: (target: Vector3) => void;
-  /** Throw without aiming (touch button / F key): at a nearby hoop, else straight ahead. */
-  throwAuto: () => void;
   dropHeld: () => void;
+  /** Hold-to-throw (Throw button / F): when charging started, null when idle. */
+  chargeStartedAt: number | null;
+  startCharge: () => void;
+  /** Throws straight ahead with the power reached, or does nothing if not charging. */
+  releaseCharge: () => void;
 
-  binGeneration: number;
-  binKickedAt: number | null;
-  markBinKicked: () => void;
-  resetBin: () => void;
+  /** Per trash bin: bumping the generation respawns it upright. */
+  bins: Record<string, { generation: number; kickedAt: number | null }>;
+  markBinKicked: (id: string) => void;
+  resetBin: (id: string) => void;
 
   isPowerFixed: boolean;
   setPowerFixed: () => void;
@@ -60,9 +64,7 @@ const hand = new Vector3();
 const target = new Vector3();
 const velocity = new Vector3();
 const forward = new Vector3();
-const autoTarget = new Vector3();
-/** Distance of a plain forward throw. */
-const FORWARD_THROW_DISTANCE = 7;
+const chargeTarget = new Vector3();
 
 let nextCanId = INITIAL_CANS.length;
 
@@ -121,22 +123,10 @@ export const usePropsStore = create<PropsState>((set, get) => ({
     useToastStore.getState().unlock('first-throw');
   },
 
-  throwAuto: () => {
-    if (!get().heldCanId) return;
-    const { x, z } = player.position;
-    const { hoop, distance } = nearestHoop(x, z);
-    if (distance < HOOP_AUTO_AIM_RANGE) {
-      autoTarget.set(hoop.rim.x, 0, hoop.rim.z);
-    } else {
-      getForward(forward);
-      autoTarget.set(x + forward.x * FORWARD_THROW_DISTANCE, 0, z + forward.z * FORWARD_THROW_DISTANCE);
-    }
-    get().throwHeld(autoTarget);
-  },
-
   dropHeld: () => {
     const { heldCanId, cans } = get();
     if (!heldCanId) return;
+    set({ chargeStartedAt: null });
     getHandPosition(hand);
     getForward(forward);
     set({
@@ -154,10 +144,29 @@ export const usePropsStore = create<PropsState>((set, get) => ({
     });
   },
 
-  binGeneration: 0,
-  binKickedAt: null,
-  markBinKicked: () => set({ binKickedAt: Date.now() }),
-  resetBin: () => set({ binGeneration: get().binGeneration + 1, binKickedAt: null }),
+  chargeStartedAt: null,
+  startCharge: () => {
+    const { heldCanId, chargeStartedAt, minigame } = get();
+    if (!heldCanId || chargeStartedAt !== null || minigame) return;
+    set({ chargeStartedAt: Date.now() });
+  },
+  releaseCharge: () => {
+    const { chargeStartedAt, heldCanId, throwHeld } = get();
+    if (chargeStartedAt === null) return;
+    set({ chargeStartedAt: null });
+    if (!heldCanId) return;
+    throwHeld(chargedThrowPoint(chargePower(Date.now() - chargeStartedAt), chargeTarget));
+  },
+
+  bins: Object.fromEntries(TRASH_BINS.map((bin) => [bin.id, { generation: 0, kickedAt: null }])),
+  markBinKicked: (id) => {
+    const bins = get().bins;
+    set({ bins: { ...bins, [id]: { ...bins[id], kickedAt: Date.now() } } });
+  },
+  resetBin: (id) => {
+    const bins = get().bins;
+    set({ bins: { ...bins, [id]: { generation: bins[id].generation + 1, kickedAt: null } } });
+  },
 
   isPowerFixed: false,
   setPowerFixed: () => set({ isPowerFixed: true }),

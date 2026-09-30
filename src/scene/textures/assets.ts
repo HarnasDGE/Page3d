@@ -16,6 +16,7 @@ import avatar from '@/assets/svg/interiors/avatar.svg?url';
 import canCola from '@/assets/svg/props/can-cola.svg?url';
 import canLemon from '@/assets/svg/props/can-lemon.svg?url';
 import canWater from '@/assets/svg/props/can-water.svg?url';
+import trashBin from '@/assets/svg/props/trash-bin.svg?url';
 import vendingFront from '@/assets/svg/props/vending-front.svg?url';
 import projectAurora from '@/assets/svg/interiors/project-aurora.svg?url';
 import projectPulse from '@/assets/svg/interiors/project-pulse.svg?url';
@@ -33,7 +34,7 @@ export const FACADE_TEXTURES = { shutter } as const;
 
 export const INTERIOR_TEXTURES = { avatar } as const;
 
-export const PROP_TEXTURES = { vendingFront } as const;
+export const PROP_TEXTURES = { vendingFront, trashBin } as const;
 
 /** Soda can labels (2:1, wrapped once around the can). */
 export const CAN_LABELS = [canCola, canLemon, canWater] as const;

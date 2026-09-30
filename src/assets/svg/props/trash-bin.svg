@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="512" viewBox="0 0 1024 512">
+  <defs>
+    <!-- Painted steel with vertical pressed ribs. -->
+    <pattern id="ribs" width="64" height="512" patternUnits="userSpaceOnUse">
+      <rect width="64" height="512" fill="#2f6b3f"/>
+      <rect x="0" width="10" height="512" fill="#3c8250"/>
+      <rect x="10" width="6" height="512" fill="#24542f"/>
+      <rect x="54" width="10" height="512" fill="#28593a"/>
+    </pattern>
+    <filter id="grime" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.02 0.08" numOctaves="3" seed="4" stitchTiles="stitch"/>
+      <feColorMatrix values="0 0 0 0 0.08  0 0 0 0 0.07  0 0 0 0 0.05  0 0 0 1.4 -0.55"/>
+    </filter>
+    <filter id="scratch" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9 0.02" numOctaves="1" seed="9" stitchTiles="stitch"/>
+      <feColorMatrix values="0 0 0 0 0.8  0 0 0 0 0.85  0 0 0 0 0.8  0 0 0 6 -5.2"/>
+    </filter>
+  </defs>
+  <rect width="1024" height="512" fill="url(#ribs)"/>
+  <!-- Top and bottom steel bands -->
+  <rect width="1024" height="34" fill="#8e969e"/>
+  <rect y="478" width="1024" height="34" fill="#8e969e"/>
+  <rect y="30" width="1024" height="4" fill="#5b636b"/>
+  <rect y="478" width="1024" height="4" fill="#5b636b"/>
+  <!-- Front: stencilled label and recycling mark -->
+  <g transform="translate(256 0)">
+    <rect x="-150" y="150" width="300" height="190" rx="10" fill="#f2f0e6"/>
+    <text x="0" y="232" text-anchor="middle" font-family="Arial Black, Arial, sans-serif" font-size="64" fill="#1f4a2c">TRASH</text>
+    <g transform="translate(0 290)" fill="none" stroke="#1f4a2c" stroke-width="10" stroke-linejoin="round">
+      <path d="M-30 18 L-8 -20 L4 0"/><path d="M30 18 L-14 18"/><path d="M8 -20 L30 18"/>
+      <path d="M-4 0 L4 0 L0 -10 Z" fill="#1f4a2c"/>
+    </g>
+  </g>
+  <!-- Back: district crest and a peeling sticker -->
+  <g transform="translate(768 0)">
+    <circle cx="0" cy="210" r="62" fill="none" stroke="#e8e4d2" stroke-width="8"/>
+    <text x="0" y="226" text-anchor="middle" font-family="Arial Black, Arial, sans-serif" font-size="44" fill="#e8e4d2">ND</text>
+    <text x="0" y="318" text-anchor="middle" font-family="Arial, sans-serif" font-weight="bold" font-size="22" fill="#e8e4d2" letter-spacing="4">CITY SERVICES</text>
+    <rect x="-70" y="360" width="120" height="70" rx="6" fill="#ffd400" transform="rotate(-8 -10 395)"/>
+    <text x="-10" y="404" text-anchor="middle" font-family="Arial Black, Arial, sans-serif" font-size="20" fill="#111" transform="rotate(-8 -10 395)">KEEP IT</text>
+  </g>
+  <rect width="1024" height="512" filter="url(#grime)"/>
+  <rect width="1024" height="512" filter="url(#scratch)" opacity="0.35"/>
+</svg>

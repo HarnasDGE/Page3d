@@ -5,7 +5,7 @@ import { canPositions, Cans } from './components/Cans';
 import { ElectricalBox } from './components/ElectricalBox';
 import { PlayerBody } from './components/PlayerBody';
 import { TrajectoryPreview } from './components/TrajectoryPreview';
-import { TrashBin } from './components/TrashBin';
+import { TrashBins } from './components/TrashBin';
 import { VendingMachine } from './components/VendingMachine';
 import { WorldColliders } from './components/WorldColliders';
 import { usePropsStore } from './propsStore';
@@ -29,7 +29,7 @@ export default function StreetPhysics() {
       <WorldColliders />
       <PlayerBody />
       <Cans />
-      <TrashBin />
+      <TrashBins />
       <ElectricalBox />
       <VendingMachine />
       <BasketballHoops />

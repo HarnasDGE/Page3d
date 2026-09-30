@@ -15,7 +15,7 @@ const isPickupEnabled = () => {
   return heldCanId === null && minigame === null;
 };
 
-/** Tapping a can walks over and picks it up (onTap throws instead while holding one). */
+/** Tapping a can walks over and picks it up. */
 const handleCanTap = (id: string) =>
   onTap(() => requestInteraction(`can:${id}`, useGameStore.getState().nearbyId));
 

@@ -12,11 +12,10 @@ const LOB_STEEPNESS = 1.5;
 /** Height of a can's centre when lying on the ground. */
 const LANDING_HEIGHT = 0.2;
 
-/** Desktop aiming: last point under the mouse cursor while holding something. */
-export const aim = {
-  point: new Vector3(),
-  active: false,
-};
+/** Throw distance range covered by the power meter. */
+export const MIN_THROW_DISTANCE = 2;
+/** Time for the power meter to fill once; it then swings back down and up again. */
+export const CHARGE_CYCLE_MS = 1100;
 
 const forward = new Vector3();
 
@@ -29,6 +28,23 @@ export function getHandPosition(out: Vector3) {
     HAND_OFFSET.y,
     player.position.z - HAND_OFFSET.x * sin + HAND_OFFSET.z * cos,
   );
+}
+
+/**
+ * Power (0..1) after holding the throw for `heldMs`: fills, then swings back,
+ * so releasing at the right moment is the skill.
+ */
+export function chargePower(heldMs: number) {
+  const phase = (heldMs / CHARGE_CYCLE_MS) % 2;
+  return phase <= 1 ? phase : 2 - phase;
+}
+
+/** Point on the ground the can is thrown at for a given power, straight ahead. */
+export function chargedThrowPoint(power: number, out: Vector3) {
+  const distance = MIN_THROW_DISTANCE + power * (MAX_THROW_DISTANCE - MIN_THROW_DISTANCE);
+  const sin = Math.sin(player.heading);
+  const cos = Math.cos(player.heading);
+  return out.set(player.position.x + sin * distance, 0, player.position.z + cos * distance);
 }
 
 /** Unit vector the android is facing. */
@@ -59,7 +75,7 @@ export function ballisticVelocity(from: Vector3, to: Vector3, time: number, out:
   );
 }
 
-/** Position along the arc at `t` seconds (for the aim preview). */
+/** Position along the arc at `t` seconds (for the trajectory preview). */
 export function pointOnArc(from: Vector3, velocity: Vector3, t: number, out: Vector3) {
   return out.set(
     from.x + velocity.x * t,

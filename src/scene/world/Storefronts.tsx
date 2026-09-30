@@ -1,5 +1,3 @@
-import { Text } from '@react-three/drei';
-import { FONTS } from '@/scene/fonts';
 import { neon } from '@/scene/materials/neon';
 import { requestInteraction } from '@/scene/interaction/interactables';
 import { enterVenue } from '@/scene/interaction/travel';
@@ -7,6 +5,8 @@ import { useInteractable } from '@/scene/interaction/useInteractable';
 import { useGameStore } from '@/scene/store/gameStore';
 import { buildings, facadeLength, facingRotation, type Building } from './cityLayout';
 import { onTap } from './events';
+import { BladeSign } from './signs/BladeSign';
+import { WallSign } from './signs/WallSign';
 import { venueByBuilding, type Venue } from './venues';
 
 const DOOR_WIDTH = 2.4;
@@ -25,7 +25,6 @@ function Storefront({ building, venue }: { building: Building; venue: Venue }) {
   const id = `venue:${building.id}`;
   const quality = useGameStore((state) => state.quality);
   const isNearby = useGameStore((state) => state.nearbyId === id);
-  const glow = neon(venue.accent, 2.6);
   const frame = neon(venue.accent, isNearby ? 3.2 : 1.6);
 
   useInteractable({
@@ -68,22 +67,10 @@ function Storefront({ building, venue }: { building: Building; venue: Venue }) {
           <meshBasicMaterial color={frame} toneMapped={false} />
         </mesh>
 
-        {/* Sign above the door */}
-        <mesh position={[0, SIGN_Y, 0.1]}>
-          <boxGeometry args={[Math.max(venue.sign.length * 0.62 + 1.2, 5), 1.5, 0.2]} />
-          <meshStandardMaterial color="#0b0916" metalness={0.6} roughness={0.4} />
-        </mesh>
-        <Text
-          font={FONTS.display}
-          position={[0, SIGN_Y, 0.22]}
-          fontSize={0.75}
-          letterSpacing={0.08}
-          anchorX="center"
-          anchorY="middle"
-        >
-          {venue.sign}
-          <meshBasicMaterial color={glow} toneMapped={false} />
-        </Text>
+        {/* 3D sign projecting from the wall above the door */}
+        <group position-y={SIGN_Y}>
+          <WallSign text={venue.sign} accent={venue.accent} />
+        </group>
       </group>
 
       {quality === 'high' && (
@@ -93,36 +80,15 @@ function Storefront({ building, venue }: { building: Building; venue: Venue }) {
   );
 }
 
-/** Vertical neon blade sign sticking out of a decorative building. */
-function BladeSign({ building, word }: { building: Building; word: string }) {
-  const color = building.accent;
-  const height = word.length * 0.9 + 0.8;
+/** Height of the centre of the vertical blade signs on decorative buildings. */
+const BLADE_Y = 9.5;
+
+/** Vertical 3D blade sign sticking out of a decorative building. */
+function DecorBladeSign({ building, word }: { building: Building; word: string }) {
   return (
-    <group
-      position={[building.door.x, 7 + height / 2, building.door.z]}
-      rotation-y={facingRotation(building)}
-    >
-      <group position={[facadeLength(building) / 2 - 2, 0, 0.8]} rotation-y={Math.PI / 2}>
-        <mesh>
-          <boxGeometry args={[1.3, height, 0.15]} />
-          <meshStandardMaterial color="#0b0916" metalness={0.6} roughness={0.4} />
-        </mesh>
-        {[1, -1].map((side) => (
-          <Text
-            key={side}
-            font={FONTS.display}
-            position-z={side * 0.09}
-            rotation-y={side > 0 ? 0 : Math.PI}
-            fontSize={0.7}
-            lineHeight={1.25}
-            anchorX="center"
-            anchorY="middle"
-            textAlign="center"
-          >
-            {word.split('').join('\n')}
-            <meshBasicMaterial color={neon(color, 2.4)} toneMapped={false} />
-          </Text>
-        ))}
+    <group position={[building.door.x, BLADE_Y, building.door.z]} rotation-y={facingRotation(building)}>
+      <group position-x={facadeLength(building) / 2 - 2}>
+        <BladeSign word={word} accent={building.accent} />
       </group>
     </group>
   );
@@ -142,7 +108,7 @@ export function Storefronts() {
       {decorative
         .filter((_, i) => i % 2 === 0)
         .map((building, i) => (
-          <BladeSign
+          <DecorBladeSign
             key={building.id}
             building={building}
             word={DECOR_SIGNS[i % DECOR_SIGNS.length]}

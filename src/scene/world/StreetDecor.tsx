@@ -1,8 +1,6 @@
 import { useLayoutEffect, useMemo, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { Text } from '@react-three/drei';
 import { MeshBasicMaterial, Object3D, type InstancedMesh } from 'three';
-import { FONTS } from '@/scene/fonts';
 import { neon } from '@/scene/materials/neon';
 import { usePropsStore } from '@/scene/props/propsStore';
 import {
@@ -15,6 +13,7 @@ import {
   streets,
   type Street,
 } from './cityLayout';
+import { ChannelLetters } from './signs/ChannelLetters';
 
 // Everything below is authored in local street space: the street runs from
 // the plaza (z = -PLAZA_HALF_SIZE) towards -Z, centred on x = 0.
@@ -113,7 +112,6 @@ function StreetLamps({ accent, streetId }: { accent: string; streetId: Street['i
 /** Neon gateway over the street entrance, labelled on both sides. */
 function StreetGate({ street }: { street: Street }) {
   const width = STREET_HALF_WIDTH * 2 + 0.6;
-  const glow = neon(street.accent, 2.6);
 
   return (
     <group position-z={STREET_START - 0.5}>
@@ -127,20 +125,11 @@ function StreetGate({ street }: { street: Street }) {
         <boxGeometry args={[width + 0.3, 1.3, 0.3]} />
         <meshStandardMaterial color="#0b0916" metalness={0.6} roughness={0.4} />
       </mesh>
+      {/* Extruded letters on both faces of the beam. */}
       {[1, -1].map((side) => (
-        <Text
-          key={side}
-          font={FONTS.display}
-          position={[0, 7.5, side * 0.17]}
-          rotation-y={side > 0 ? 0 : Math.PI}
-          fontSize={0.62}
-          letterSpacing={0.12}
-          anchorX="center"
-          anchorY="middle"
-        >
-          {street.label.toUpperCase()}
-          <meshBasicMaterial color={glow} toneMapped={false} />
-        </Text>
+        <group key={side} position={[0, 7.5, side * 0.15]} rotation-y={side > 0 ? 0 : Math.PI}>
+          <ChannelLetters text={street.label.toUpperCase()} size={0.5} depth={0.1} accent={street.accent} />
+        </group>
       ))}
     </group>
   );
